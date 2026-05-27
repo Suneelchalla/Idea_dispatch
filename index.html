@@ -249,6 +249,8 @@
   .source-tag.reddit { background: var(--reddit); }
   .source-tag.hn { background: var(--hn); }
   .source-tag.news { background: #1e4d6b; }
+  .source-tag.india { background: #0f766e; }
+  .source-tag.regional { background: #6d28d9; }
 
   .timestamp {
     font-family: 'JetBrains Mono', monospace;
@@ -431,10 +433,12 @@
 
   <div class="controls">
     <div class="filters" id="filters">
-      <button class="filter-btn active" data-source="all">All sources</button>
+      <button class="filter-btn active" data-source="ideas">Ideas</button>
       <button class="filter-btn" data-source="reddit">Reddit</button>
       <button class="filter-btn" data-source="hn">Hacker News</button>
       <button class="filter-btn" data-source="news">World News</button>
+      <button class="filter-btn" data-source="india">India News</button>
+      <button class="filter-btn" data-source="regional">Regional</button>
     </div>
     <button class="refresh-btn" id="refreshBtn">
       <span class="spinner">↻</span>
@@ -459,13 +463,33 @@
   const REDDIT_SUBS = ['SomebodyMakeThis', 'AppIdeas', 'SaaSIdeas', 'Lightbulb', 'Startup_Ideas'];
   const HN_QUERIES = ['app idea', 'startup idea', 'side project'];
   const NEWS_FEEDS = [
-    { name: 'BBC News',     url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-    { name: 'Al Jazeera',   url: 'https://www.aljazeera.com/xml/rss/all.xml' },
-    { name: 'The Guardian', url: 'https://www.theguardian.com/world/rss' },
-    { name: 'The Hindu',    url: 'https://www.thehindu.com/news/national/feeder/default.rss' },
-    { name: 'NPR',          url: 'https://feeds.npr.org/1004/rss.xml' },
-    { name: 'TechCrunch',   url: 'https://techcrunch.com/feed/' },
-    { name: 'The Verge',    url: 'https://www.theverge.com/rss/index.xml' },
+    { name: 'BBC News',     url: 'https://feeds.bbci.co.uk/news/world/rss.xml',         platform: 'news' },
+    { name: 'Al Jazeera',   url: 'https://www.aljazeera.com/xml/rss/all.xml',            platform: 'news' },
+    { name: 'The Guardian', url: 'https://www.theguardian.com/world/rss',                platform: 'news' },
+    { name: 'NPR',          url: 'https://feeds.npr.org/1004/rss.xml',                   platform: 'news' },
+    { name: 'TechCrunch',   url: 'https://techcrunch.com/feed/',                         platform: 'news' },
+    { name: 'The Verge',    url: 'https://www.theverge.com/rss/index.xml',               platform: 'news' },
+  ];
+  const INDIA_FEEDS = [
+    { name: 'The Hindu',         url: 'https://www.thehindu.com/news/national/feeder/default.rss',           platform: 'india' },
+    { name: 'Times of India',    url: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms',          platform: 'india' },
+    { name: 'Hindustan Times',   url: 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml',     platform: 'india' },
+    { name: 'NDTV',              url: 'https://feeds.feedburner.com/ndtvnews-top-stories',                   platform: 'india' },
+    { name: 'Indian Express',    url: 'https://indianexpress.com/section/india/feed/',                       platform: 'india' },
+    { name: 'Scroll.in',         url: 'https://scroll.in/feeds/all.rss',                                     platform: 'india' },
+    { name: 'The Print',         url: 'https://theprint.in/feed/',                                           platform: 'india' },
+    { name: 'Livemint',          url: 'https://www.livemint.com/rss/news',                                   platform: 'india' },
+  ];
+  const REGIONAL_FEEDS = [
+    // Tamil Nadu
+    { name: 'Hindu · Tamil Nadu',    url: 'https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss',           platform: 'regional' },
+    { name: 'TOI · Chennai',         url: 'https://timesofindia.indiatimes.com/rssfeeds/-2128816011.cms',                   platform: 'regional' },
+    { name: 'Express · Tamil Nadu',  url: 'https://www.newindianexpress.com/Nation/Tamil-Nadu/rssfeed/?id=183&getXmlFeed=true', platform: 'regional' },
+    // Andhra Pradesh
+    { name: 'Hindu · Andhra Pradesh', url: 'https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss',       platform: 'regional' },
+    { name: 'TOI · Hyderabad',        url: 'https://timesofindia.indiatimes.com/rssfeeds/-2128816905.cms',                   platform: 'regional' },
+    { name: 'Hindu · Telangana',      url: 'https://www.thehindu.com/news/national/telangana/feeder/default.rss',            platform: 'regional' },
+    { name: 'Deccan Chronicle · AP',  url: 'https://www.deccanchronicle.com/rss_feed/?section=nation/current-affairs',       platform: 'regional' },
   ];
   const REFRESH_MS = 10 * 60 * 1000; // 10 minutes
   // Reddit blocks browser CORS, so we route through public proxies.
@@ -507,7 +531,16 @@
   }
 
   let allItems = [];
-  let activeFilter = 'all';
+  let activeFilter = 'ideas';
+
+  const FILTER_GROUPS = {
+    ideas:    ['reddit', 'hn'],
+    reddit:   ['reddit'],
+    hn:       ['hn'],
+    news:     ['news'],
+    india:    ['india'],
+    regional: ['regional'],
+  };
 
   // ---------- Time formatting ----------
   function timeAgo(ms) {
@@ -612,7 +645,7 @@
         if (!title || !link) return;
         out.push({
           source: feed.name,
-          platform: 'news',
+          platform: feed.platform || 'news',
           title,
           preview: clean.slice(0, 280),
           url: link,
@@ -637,9 +670,8 @@
 
   function render() {
     const feed = document.getElementById('feed');
-    const items = activeFilter === 'all'
-      ? allItems
-      : allItems.filter(i => i.platform === activeFilter);
+    const allowed = FILTER_GROUPS[activeFilter] || [];
+    const items = allItems.filter(i => allowed.includes(i.platform));
 
     if (items.length === 0) {
       feed.innerHTML = '<div class="state">No ideas found from this source.<br>Try refreshing or another filter.</div>';
@@ -702,6 +734,8 @@
       ...REDDIT_SUBS.map(fetchReddit),
       ...HN_QUERIES.map(fetchHN),
       ...NEWS_FEEDS.map(fetchNewsFeed),
+      ...INDIA_FEEDS.map(fetchNewsFeed),
+      ...REGIONAL_FEEDS.map(fetchNewsFeed),
     ];
 
     try {
