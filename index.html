@@ -170,6 +170,135 @@
   }
   .filter-btn.active .count { background: white; color: var(--ink); }
 
+  /* Two-row controls layout */
+  .controls-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .controls-row-top { padding-bottom: 12px; border-bottom: 1px dotted var(--rule); }
+  .controls { flex-direction: column; align-items: stretch; gap: 12px; }
+
+  /* Search */
+  .search-wrap {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-wrap::before {
+    content: '⌕';
+    position: absolute;
+    left: 12px;
+    color: var(--ink-soft);
+    font-size: 16px;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 15px;
+    padding: 10px 36px 10px 32px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .search-input:focus { border-color: var(--ink); }
+  .search-input::placeholder { color: var(--ink-soft); opacity: 0.7; }
+  .search-clear {
+    position: absolute;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px 8px;
+    display: none;
+  }
+  .search-clear.visible { display: block; }
+  .search-clear:hover { color: var(--accent); }
+
+  /* Today-only toggle pill */
+  .today-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .today-toggle.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .today-toggle:hover { border-color: var(--ink); }
+
+  /* Card image (top of card, full-bleed) */
+  .card-image {
+    width: calc(100% + 44px);
+    height: 160px;
+    object-fit: cover;
+    margin: -22px -22px 16px;
+    background: var(--paper-deep);
+    display: block;
+  }
+  [data-theme="dark"] .card-image { filter: brightness(0.85); }
+
+  /* Read state — visually faded */
+  .card.card-read {
+    opacity: 0.55;
+  }
+  .card.card-read .card-title a { color: var(--ink-soft); }
+  .card.card-read:hover { opacity: 0.9; }
+  .card.card-read::after {
+    content: 'READ';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    background: var(--paper);
+    padding: 2px 5px;
+    border: 1px solid var(--rule);
+  }
+
+  /* "Empty feed" + "show yesterday" callout */
+  .state-action {
+    margin-top: 18px;
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  .state-action:hover { background: var(--accent); color: white; }
+
+  @media (max-width: 600px) {
+    .controls-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .today-toggle { width: 100%; padding: 10px 14px; min-height: 40px; }
+    .card-image { height: 140px; width: calc(100% + 32px); margin: -18px -16px 14px; }
+  }
+
   body {
     background-image:
       radial-gradient(ellipse at top left, rgba(200, 52, 26, 0.04), transparent 50%),
@@ -645,20 +774,29 @@
   </header>
 
   <div class="controls">
-    <div class="filters" id="filters">
-      <button class="filter-btn active" data-source="ideas">Ideas</button>
-      <button class="filter-btn" data-source="reddit">Reddit</button>
-      <button class="filter-btn" data-source="hn">Hacker News</button>
-      <button class="filter-btn" data-source="news">World News</button>
-      <button class="filter-btn" data-source="india">India News</button>
-      <button class="filter-btn" data-source="regional">Regional</button>
-      <button class="filter-btn" data-source="saved">★ Saved<span class="count" id="savedCount" style="display:none">0</span></button>
+    <div class="controls-row controls-row-top">
+      <div class="search-wrap">
+        <input type="search" class="search-input" id="searchInput" placeholder="Search ideas, headlines, anything..." autocomplete="off" />
+        <button class="search-clear" id="searchClear" aria-label="Clear search">×</button>
+      </div>
+      <button class="today-toggle active" id="todayToggle">Today only</button>
     </div>
-    <div class="control-right">
-      <button class="refresh-btn" id="refreshBtn">
-        <span class="spinner">↻</span>
-        <span>Refresh feed</span>
-      </button>
+    <div class="controls-row">
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-source="ideas">Ideas</button>
+        <button class="filter-btn" data-source="reddit">Reddit</button>
+        <button class="filter-btn" data-source="hn">Hacker News</button>
+        <button class="filter-btn" data-source="news">World News</button>
+        <button class="filter-btn" data-source="india">India News</button>
+        <button class="filter-btn" data-source="regional">Regional</button>
+        <button class="filter-btn" data-source="saved">★ Saved<span class="count" id="savedCount" style="display:none">0</span></button>
+      </div>
+      <div class="control-right">
+        <button class="refresh-btn" id="refreshBtn">
+          <span class="spinner">↻</span>
+          <span>Refresh feed</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -748,6 +886,8 @@
 
   let allItems = [];
   let activeFilter = 'ideas';
+  let todayOnly = true;
+  let searchQuery = '';
 
   const FILTER_GROUPS = {
     ideas:    ['reddit', 'hn'],
@@ -756,8 +896,46 @@
     news:     ['news'],
     india:    ['india'],
     regional: ['regional'],
-    saved:    ['__saved__'], // sentinel — handled specially
+    saved:    ['__saved__'],
   };
+
+  // ---------- Today filter ----------
+  function isToday(ts) {
+    const d = new Date(ts);
+    const n = new Date();
+    return d.getFullYear() === n.getFullYear()
+        && d.getMonth() === n.getMonth()
+        && d.getDate() === n.getDate();
+  }
+
+  // ---------- Read state (localStorage) ----------
+  const READ_KEY = 'the-reader:read';
+  function getRead() {
+    try { return JSON.parse(localStorage.getItem(READ_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function setReadMap(map) {
+    try { localStorage.setItem(READ_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+  function isRead(url) { return !!getRead()[url]; }
+  window.markRead = function(url) {
+    const read = getRead();
+    if (read[url]) return;
+    read[url] = Date.now();
+    setReadMap(read);
+    const card = document.querySelector(`[data-url="${CSS.escape(url)}"]`);
+    if (card) card.classList.add('card-read');
+  };
+  // Drop read entries older than 30 days so localStorage doesn't bloat
+  function cleanupRead() {
+    const read = getRead();
+    const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    let changed = false;
+    for (const url in read) {
+      if (read[url] < cutoff) { delete read[url]; changed = true; }
+    }
+    if (changed) setReadMap(read);
+  }
 
   // ---------- Saved items (localStorage) ----------
   const SAVE_KEY = 'idea-dispatch:saved';
@@ -865,16 +1043,26 @@
       if (!data || !data.data || !data.data.children) return [];
       return data.data.children
         .filter(c => !c.data.stickied)
-        .map(c => ({
-          source: 'r/' + sub,
-          platform: 'reddit',
-          title: c.data.title,
-          preview: (c.data.selftext || '').trim(),
-          url: 'https://reddit.com' + c.data.permalink,
-          score: c.data.score,
-          comments: c.data.num_comments,
-          createdAt: c.data.created_utc * 1000,
-        }));
+        .map(c => {
+          const td = c.data;
+          let image = '';
+          if (td.preview && td.preview.images && td.preview.images[0] && td.preview.images[0].source) {
+            image = td.preview.images[0].source.url.replace(/&amp;/g, '&');
+          } else if (td.thumbnail && /^https?:\/\//.test(td.thumbnail)) {
+            image = td.thumbnail;
+          }
+          return {
+            source: 'r/' + sub,
+            platform: 'reddit',
+            title: td.title,
+            preview: (td.selftext || '').trim(),
+            image,
+            url: 'https://reddit.com' + td.permalink,
+            score: td.score,
+            comments: td.num_comments,
+            createdAt: td.created_utc * 1000,
+          };
+        });
     } catch (e) {
       console.warn('Reddit fetch failed for ' + sub, e);
       return [];
@@ -904,6 +1092,7 @@
           platform: 'hn',
           title: h.title || h.story_title || '(untitled)',
           preview: storyText,
+          image: '',
           url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`,
           score: h.points || 0,
           comments: h.num_comments || 0,
@@ -916,17 +1105,45 @@
     }
   }
 
+  function extractFeedImage(item) {
+    // 1. media:thumbnail or media:content (Yahoo Media RSS namespace)
+    const els = item.getElementsByTagName('*');
+    for (const el of els) {
+      const ln = el.localName;
+      if (ln === 'thumbnail' || ln === 'content') {
+        const url = el.getAttribute('url') || el.getAttribute('href');
+        if (!url) continue;
+        const medium = el.getAttribute('medium');
+        const type = el.getAttribute('type') || '';
+        if (medium === 'image' || type.startsWith('image/') || /\.(jpe?g|png|webp|gif|avif)(\?|#|$)/i.test(url)) {
+          return url;
+        }
+      }
+    }
+    // 2. <enclosure type="image/..." url="...">
+    const enc = item.querySelector('enclosure');
+    if (enc) {
+      const type = enc.getAttribute('type') || '';
+      const url = enc.getAttribute('url');
+      if (url && type.startsWith('image/')) return url;
+    }
+    // 3. First <img src=""> inside description/content/summary
+    const desc = item.querySelector('description, summary, content')?.textContent || '';
+    const match = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match) return match[1].replace(/&amp;/g, '&');
+    return '';
+  }
+
   async function fetchNewsFeed(feed) {
     try {
       const xml = await fetchTextViaProxy(feed.url);
       const doc = new DOMParser().parseFromString(xml, 'application/xml');
       if (doc.querySelector('parsererror')) throw new Error('XML parse error');
-      const items = doc.querySelectorAll('item, entry'); // RSS or Atom
+      const items = doc.querySelectorAll('item, entry');
       const out = [];
       items.forEach((item, i) => {
-        if (i >= 8) return; // cap per source
+        if (i >= 8) return;
         const title = (item.querySelector('title')?.textContent || '').trim();
-        // Atom <entry> uses <link href="..."/>, RSS uses <link>url</link>
         let link = item.querySelector('link')?.getAttribute('href')
                 || item.querySelector('link')?.textContent || '';
         link = link.trim();
@@ -940,6 +1157,7 @@
           platform: feed.platform || 'news',
           title,
           preview: clean.slice(0, 280),
+          image: extractFeedImage(item),
           url: link,
           score: 0,
           comments: 0,
@@ -963,7 +1181,9 @@
   function render() {
     const feed = document.getElementById('feed');
     let items;
-    if (activeFilter === 'saved') {
+    const isSavedTab = activeFilter === 'saved';
+
+    if (isSavedTab) {
       const saved = getSaved();
       items = Object.values(saved).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
     } else {
@@ -971,11 +1191,34 @@
       items = allItems.filter(i => allowed.includes(i.platform));
     }
 
+    // Today-only filter (skip for Saved tab — saved items should always show)
+    if (todayOnly && !isSavedTab) {
+      items = items.filter(i => isToday(i.createdAt));
+    }
+
+    // Search filter (applies everywhere)
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      items = items.filter(i =>
+        (i.title || '').toLowerCase().includes(q) ||
+        (i.preview || '').toLowerCase().includes(q) ||
+        (i.source || '').toLowerCase().includes(q)
+      );
+    }
+
     if (items.length === 0) {
-      const msg = activeFilter === 'saved'
-        ? 'No saved items yet. Tap the ☆ on any card to save it for later.'
-        : 'No ideas found from this source. Try refreshing or another filter.';
-      feed.innerHTML = `<div class="state">${msg}</div>`;
+      let msg, action = '';
+      if (isSavedTab) {
+        msg = 'No saved items yet. Tap the ☆ on any card to save it for later.';
+      } else if (searchQuery) {
+        msg = `No matches for &ldquo;${escapeHtml(searchQuery)}&rdquo;.`;
+      } else if (todayOnly) {
+        msg = 'Quiet so far today — feeds may still be updating.';
+        action = '<button class="state-action" onclick="document.getElementById(\'todayToggle\').click()">Show yesterday too</button>';
+      } else {
+        msg = 'No items found from this source. Try refreshing or another filter.';
+      }
+      feed.innerHTML = `<div class="state">${msg}${action ? '<br><br>' + action : ''}</div>`;
       return;
     }
 
@@ -988,13 +1231,19 @@
            </div>`
         : `<div class="stats" style="opacity:.6"><span class="stat">${escapeHtml(item.source)}</span></div>`;
       const saved = isSaved(item.url);
+      const read = isRead(item.url);
       const saveBtn = `<button class="save-btn ${saved ? 'saved' : ''}" data-url="${escapeHtml(item.url)}" onclick="toggleSave(this)" title="${saved ? 'Unsave' : 'Save for later'}">${saved ? '★' : '☆'}</button>`;
       const isLong = item.preview && item.preview.length > 220;
       const previewHtml = item.preview
-        ? `<p class="card-preview">${escapeHtml(item.preview)}</p>${isLong ? '<button class="expand-btn" onclick="toggleExpand(this)">Read full post ↓</button>' : ''}`
+        ? `<p class="card-preview">${escapeHtml(item.preview)}</p>${isLong ? `<button class="expand-btn" onclick="toggleExpand(this); markRead('${escapeHtml(item.url)}')">Read full post ↓</button>` : ''}`
         : '<p class="card-preview" style="opacity:.5;font-style:italic">(no preview — click through to read)</p>';
+      const imageHtml = item.image
+        ? `<img class="card-image" src="${escapeHtml(item.image)}" loading="lazy" onerror="this.style.display='none'" alt="">`
+        : '';
+      const onClick = `onclick="markRead('${escapeHtml(item.url)}')"`;
       return `
-      <article class="card" style="animation-delay: ${Math.min(idx * 30, 600)}ms">
+      <article class="card ${read ? 'card-read' : ''}" data-url="${escapeHtml(item.url)}" style="animation-delay: ${Math.min(idx * 30, 600)}ms">
+        ${imageHtml}
         <div class="card-head">
           <span class="source-tag ${item.platform}">${escapeHtml(item.source)}</span>
           <div style="display:flex;align-items:center;gap:6px">
@@ -1002,11 +1251,11 @@
             ${saveBtn}
           </div>
         </div>
-        <h2 class="card-title"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h2>
+        <h2 class="card-title"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" ${onClick}>${escapeHtml(item.title)}</a></h2>
         ${previewHtml}
         <div class="card-meta">
           ${statsHtml}
-          <a class="open-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Open ↗</a>
+          <a class="open-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener" ${onClick}>Open ↗</a>
         </div>
       </article>
     `;
@@ -1089,8 +1338,36 @@
     render();
   });
 
+  // Search
+  const searchInput = document.getElementById('searchInput');
+  const searchClear = document.getElementById('searchClear');
+  let searchDebounce;
+  searchInput.addEventListener('input', e => {
+    searchQuery = e.target.value.trim();
+    searchClear.classList.toggle('visible', searchQuery.length > 0);
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(render, 150);
+  });
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    searchQuery = '';
+    searchClear.classList.remove('visible');
+    render();
+    searchInput.focus();
+  });
+
+  // Today toggle
+  const todayBtn = document.getElementById('todayToggle');
+  todayBtn.addEventListener('click', () => {
+    todayOnly = !todayOnly;
+    todayBtn.classList.toggle('active', todayOnly);
+    todayBtn.textContent = todayOnly ? 'Today only' : 'All recent';
+    render();
+  });
+
   // initial setup
   loadTheme();
+  cleanupRead();
   updateSavedCount();
   loadAll();
   setInterval(loadAll, REFRESH_MS);
