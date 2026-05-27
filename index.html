@@ -2,8 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Idea Dispatch — daily roundup of app ideas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>The Reader — your daily reading list</title>
+
+<!-- PWA / mobile app metadata -->
+<meta name="theme-color" content="#1a1614" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="The Reader" />
+<meta name="application-name" content="The Reader" />
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23f3ece0'/><rect x='6' y='6' width='180' height='180' fill='none' stroke='%231a1614' stroke-width='3'/><text x='96' y='138' font-family='Georgia,serif' font-style='italic' font-weight='900' font-size='130' fill='%23c8341a' text-anchor='middle'>tR</text></svg>" />
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23f3ece0'/><rect x='6' y='6' width='180' height='180' fill='none' stroke='%231a1614' stroke-width='3'/><text x='96' y='138' font-family='Georgia,serif' font-style='italic' font-weight='900' font-size='130' fill='%23c8341a' text-anchor='middle'>tR</text></svg>" />
+<link rel="manifest" href='data:application/manifest+json,{"name":"The Reader","short_name":"Reader","start_url":".","display":"standalone","background_color":"%23f3ece0","theme_color":"%231a1614","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27><rect width=%27192%27 height=%27192%27 fill=%27%23f3ece0%27/><rect x=%276%27 y=%276%27 width=%27180%27 height=%27180%27 fill=%27none%27 stroke=%27%231a1614%27 stroke-width=%273%27/><text x=%2796%27 y=%27138%27 font-family=%27Georgia,serif%27 font-style=%27italic%27 font-weight=%27900%27 font-size=%27130%27 fill=%27%23c8341a%27 text-anchor=%27middle%27>tR</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}' />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -19,7 +30,37 @@
     --reddit: #c8341a;
     --hn: #d97706;
     --shadow: rgba(26, 22, 20, 0.08);
+    --grain-opacity: 0.35;
+    --controls-blur: rgba(235, 226, 210, 0.92);
+    --star-saved: #d97706;
   }
+
+  [data-theme="dark"] {
+    --paper: #16110f;
+    --paper-deep: #1f1916;
+    --ink: #f3ece0;
+    --ink-soft: #a89a82;
+    --rule: #3a322c;
+    --accent: #f5654a;
+    --accent-soft: #4a2218;
+    --reddit: #f5654a;
+    --hn: #fbbf24;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --grain-opacity: 0.15;
+    --controls-blur: rgba(31, 25, 22, 0.92);
+    --star-saved: #fbbf24;
+  }
+
+  [data-theme="dark"] body {
+    background-image:
+      radial-gradient(ellipse at top left, rgba(245, 101, 74, 0.06), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(58, 50, 44, 0.4), transparent 60%);
+  }
+
+  [data-theme="dark"] body::before { mix-blend-mode: screen; }
+  [data-theme="dark"] .source-tag.news { background: #3b82f6; }
+  [data-theme="dark"] .source-tag.india { background: #14b8a6; }
+  [data-theme="dark"] .source-tag.regional { background: #a78bfa; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -30,7 +71,104 @@
     font-size: 17px;
     line-height: 1.55;
     min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+
+  .card, .controls, .filter-btn, .refresh-btn, .source-tag {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* Greeting in masthead */
+  .greeting {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 13px;
+  }
+
+  /* Floating theme toggle in top-right corner of page */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    z-index: 100;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+
+  .theme-toggle:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    transform: rotate(-15deg);
+  }
+
+  @media (max-width: 600px) {
+    .theme-toggle {
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      font-size: 13px;
+    }
+  }
+
+  /* Theme toggle + save buttons */
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:hover { background: var(--paper-deep); border-color: var(--ink); }
+
+  .control-right { display: flex; gap: 8px; align-items: center; }
+
+  .save-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 6px;
+    color: var(--ink-soft);
+    transition: all 0.15s ease;
+  }
+
+  .save-btn:hover { transform: scale(1.15); color: var(--star-saved); }
+  .save-btn.saved { color: var(--star-saved); }
+
+  .filter-btn .count {
+    margin-left: 6px;
+    padding: 1px 6px;
+    background: var(--accent);
+    color: white;
+    font-size: 9px;
+    border-radius: 8px;
+  }
+  .filter-btn.active .count { background: white; color: var(--ink); }
 
   body {
     background-image:
@@ -45,10 +183,11 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    opacity: 0.35;
+    opacity: var(--grain-opacity);
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.18 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
     mix-blend-mode: multiply;
     z-index: 1;
+    transition: opacity 0.3s ease;
   }
 
   .container {
@@ -409,24 +548,98 @@
     color: var(--ink-soft);
   }
 
+  /* Sticky controls bar (so refresh + filter are always reachable while scrolling) */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: var(--controls-blur);
+  }
+
   @media (max-width: 600px) {
-    .container { padding: 32px 18px 60px; }
-    .masthead-meta { flex-direction: column; gap: 10px; }
-    .controls { flex-direction: column; align-items: stretch; }
-    .filters { justify-content: center; }
-    .feed { grid-template-columns: 1fr; }
+    body { font-size: 16px; }
+    .container { padding: 24px 14px 60px; }
+
+    /* Compact masthead on mobile */
+    .masthead { padding: 16px 0 14px; margin-bottom: 20px; }
+    .title { font-size: 56px; }
+    .subtitle { font-size: 15px; margin-top: 8px; }
+    .eyebrow { margin-bottom: 8px; }
+    .masthead-meta {
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 14px;
+      padding-top: 12px;
+      font-size: 10px;
+    }
+
+    /* Horizontally-scrolling filter tabs (so they don't wrap awkwardly) */
+    .controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 10px;
+      margin-left: -14px;
+      margin-right: -14px;
+      border-left: none;
+      border-right: none;
+    }
+    .filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      gap: 6px;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      padding: 10px 14px;
+      min-height: 40px;
+    }
+    .refresh-btn {
+      width: 100%;
+      justify-content: center;
+      min-height: 44px;
+      padding: 12px 18px;
+    }
+
+    /* Card tweaks */
+    .feed { grid-template-columns: 1fr; gap: 14px; }
+    .card { padding: 18px 16px 14px; }
+    .card-title { font-size: 20px; }
+    .open-link { padding: 4px 0; }
+    .expand-btn { padding: 8px 0 12px; min-height: 36px; }
+
+    footer { margin-top: 36px; font-size: 10px; }
+  }
+
+  /* Respect iPhone notch / safe areas when running fullscreen */
+  @supports (padding: env(safe-area-inset-top)) {
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
   }
 </style>
 </head>
 <body>
+<button class="theme-toggle" id="themeToggle" title="Toggle dark mode" aria-label="Toggle theme">☾</button>
 <div class="container">
 
   <header class="masthead">
     <div class="eyebrow">Vol. I · Daily Edition</div>
-    <h1 class="title">Idea <span>Dispatch</span></h1>
-    <p class="subtitle">A daily roundup of fresh app ideas and world headlines, from the corners of the web.</p>
+    <h1 class="title">The <span>Reader</span></h1>
+    <p class="subtitle">Your daily reading list — app ideas, headlines, and dispatches from the web.</p>
     <div class="masthead-meta">
-      <span id="dateLine">— · —</span>
+      <span id="dateLine"><span class="greeting" id="greeting">Hello</span> · <span id="dateOnly">— · —</span></span>
       <span id="updatedLine">Last updated: never</span>
     </div>
   </header>
@@ -439,11 +652,14 @@
       <button class="filter-btn" data-source="news">World News</button>
       <button class="filter-btn" data-source="india">India News</button>
       <button class="filter-btn" data-source="regional">Regional</button>
+      <button class="filter-btn" data-source="saved">★ Saved<span class="count" id="savedCount" style="display:none">0</span></button>
     </div>
-    <button class="refresh-btn" id="refreshBtn">
-      <span class="spinner">↻</span>
-      <span>Refresh feed</span>
-    </button>
+    <div class="control-right">
+      <button class="refresh-btn" id="refreshBtn">
+        <span class="spinner">↻</span>
+        <span>Refresh feed</span>
+      </button>
+    </div>
   </div>
 
   <div id="errorBox"></div>
@@ -540,7 +756,83 @@
     news:     ['news'],
     india:    ['india'],
     regional: ['regional'],
+    saved:    ['__saved__'], // sentinel — handled specially
   };
+
+  // ---------- Saved items (localStorage) ----------
+  const SAVE_KEY = 'idea-dispatch:saved';
+  function getSaved() {
+    try { return JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'); }
+    catch { return {}; }
+  }
+  function setSaved(map) {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(map)); } catch (e) { console.warn('Save failed', e); }
+  }
+  function isSaved(url) { return !!getSaved()[url]; }
+  function updateSavedCount() {
+    const n = Object.keys(getSaved()).length;
+    const el = document.getElementById('savedCount');
+    if (!el) return;
+    el.textContent = n;
+    el.style.display = n > 0 ? 'inline-block' : 'none';
+  }
+
+  window.toggleSave = function(btn) {
+    const url = btn.dataset.url;
+    const saved = getSaved();
+    if (saved[url]) {
+      delete saved[url];
+      btn.classList.remove('saved');
+      btn.textContent = '☆';
+    } else {
+      // Find item from current allItems
+      const item = allItems.find(i => i.url === url);
+      if (item) {
+        saved[url] = { ...item, savedAt: Date.now() };
+        btn.classList.add('saved');
+        btn.textContent = '★';
+      }
+    }
+    setSaved(saved);
+    updateSavedCount();
+    // If viewing saved tab, re-render so removed items disappear
+    if (activeFilter === 'saved') render();
+  };
+
+  // ---------- Theme ----------
+  const THEME_KEY = 'idea-dispatch:theme';
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = theme === 'dark' ? '☀' : '☾';
+    // Update theme-color meta for mobile chrome
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#16110f' : '#1a1614');
+  }
+  function loadTheme() {
+    let theme = null;
+    try { theme = localStorage.getItem(THEME_KEY); } catch {}
+    if (!theme) {
+      theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(theme);
+  }
+  function toggleTheme() {
+    const current = document.documentElement.dataset.theme || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch {}
+  }
+
+  // ---------- Greeting ----------
+  function getGreeting() {
+    const h = new Date().getHours();
+    if (h < 5)  return 'Working late';
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    if (h < 21) return 'Good evening';
+    return 'Good night';
+  }
 
   // ---------- Time formatting ----------
   function timeAgo(ms) {
@@ -670,11 +962,20 @@
 
   function render() {
     const feed = document.getElementById('feed');
-    const allowed = FILTER_GROUPS[activeFilter] || [];
-    const items = allItems.filter(i => allowed.includes(i.platform));
+    let items;
+    if (activeFilter === 'saved') {
+      const saved = getSaved();
+      items = Object.values(saved).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+    } else {
+      const allowed = FILTER_GROUPS[activeFilter] || [];
+      items = allItems.filter(i => allowed.includes(i.platform));
+    }
 
     if (items.length === 0) {
-      feed.innerHTML = '<div class="state">No ideas found from this source.<br>Try refreshing or another filter.</div>';
+      const msg = activeFilter === 'saved'
+        ? 'No saved items yet. Tap the ☆ on any card to save it for later.'
+        : 'No ideas found from this source. Try refreshing or another filter.';
+      feed.innerHTML = `<div class="state">${msg}</div>`;
       return;
     }
 
@@ -686,7 +987,8 @@
              <span class="stat">💬 ${item.comments}</span>
            </div>`
         : `<div class="stats" style="opacity:.6"><span class="stat">${escapeHtml(item.source)}</span></div>`;
-      // Show expand button when there's enough text to warrant it (Reddit/HN typically)
+      const saved = isSaved(item.url);
+      const saveBtn = `<button class="save-btn ${saved ? 'saved' : ''}" data-url="${escapeHtml(item.url)}" onclick="toggleSave(this)" title="${saved ? 'Unsave' : 'Save for later'}">${saved ? '★' : '☆'}</button>`;
       const isLong = item.preview && item.preview.length > 220;
       const previewHtml = item.preview
         ? `<p class="card-preview">${escapeHtml(item.preview)}</p>${isLong ? '<button class="expand-btn" onclick="toggleExpand(this)">Read full post ↓</button>' : ''}`
@@ -695,7 +997,10 @@
       <article class="card" style="animation-delay: ${Math.min(idx * 30, 600)}ms">
         <div class="card-head">
           <span class="source-tag ${item.platform}">${escapeHtml(item.source)}</span>
-          <span class="timestamp">${timeAgo(item.createdAt)}</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="timestamp">${timeAgo(item.createdAt)}</span>
+            ${saveBtn}
+          </div>
         </div>
         <h2 class="card-title"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h2>
         ${previewHtml}
@@ -728,7 +1033,8 @@
     btn.classList.add('loading');
     btn.disabled = true;
 
-    document.getElementById('dateLine').textContent = formatDate();
+    document.getElementById('greeting').textContent = getGreeting();
+    document.getElementById('dateOnly').textContent = formatDate();
 
     const tasks = [
       ...REDDIT_SUBS.map(fetchReddit),
@@ -772,6 +1078,7 @@
 
   // ---------- Wiring ----------
   document.getElementById('refreshBtn').addEventListener('click', loadAll);
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
   document.getElementById('filters').addEventListener('click', e => {
     const btn = e.target.closest('.filter-btn');
@@ -782,7 +1089,9 @@
     render();
   });
 
-  // initial load + auto-refresh
+  // initial setup
+  loadTheme();
+  updateSavedCount();
   loadAll();
   setInterval(loadAll, REFRESH_MS);
 </script>
