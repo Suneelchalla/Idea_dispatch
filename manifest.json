@@ -1,0 +1,25 @@
+{
+  "name": "Coffee & Headlines",
+  "short_name": "News",
+  "description": "Your morning read — app ideas, headlines, and dispatches from the web.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f3ece0",
+  "theme_color": "#1a1614",
+  "icons": [
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
