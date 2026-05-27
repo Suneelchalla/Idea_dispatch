@@ -1046,6 +1046,49 @@
     if (changed) setReadMap(read);
   }
 
+  // ---------- Items cache (instant-open) ----------
+  // Caches the fetched items so re-opening the app shows content immediately
+  // while a fresh fetch runs in the background ("stale-while-revalidate").
+  const ITEMS_CACHE_KEY = 'coffee-headlines:items-v1';
+  const ITEMS_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+  function saveItemsCache(items) {
+    if (!items || items.length === 0) return;
+    try {
+      // Cap to 80 items and trim long previews to keep localStorage small
+      const payload = {
+        items: items.slice(0, 80).map(i => ({
+          source: i.source,
+          platform: i.platform,
+          title: i.title,
+          preview: i.preview ? i.preview.slice(0, 500) : '',
+          image: i.image || '',
+          url: i.url,
+          score: i.score || 0,
+          comments: i.comments || 0,
+          createdAt: i.createdAt,
+        })),
+        savedAt: Date.now(),
+      };
+      localStorage.setItem(ITEMS_CACHE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn('Items cache save failed:', e);
+    }
+  }
+
+  function loadItemsCache() {
+    try {
+      const raw = localStorage.getItem(ITEMS_CACHE_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data.items || !Array.isArray(data.items) || !data.savedAt) return null;
+      if (Date.now() - data.savedAt > ITEMS_CACHE_TTL) return null;
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
   // ---------- Saved items (localStorage) ----------
   const SAVE_KEY = 'idea-dispatch:saved';
   function getSaved() {
@@ -1438,6 +1481,8 @@
 
       if (allItems.length === 0) {
         showError('No ideas loaded. If you\'re previewing this inside another app, download the file and open it directly in your browser — sandboxed previews block external requests.');
+      } else {
+        saveItemsCache(allItems);  // persist for instant-open next time
       }
 
       render();
@@ -1494,7 +1539,20 @@
   loadTheme();
   cleanupRead();
   updateSavedCount();
-  loadAll(false);  // initial load — page already shows the loader in HTML
+
+  // Instant-open: if we have cached items from a previous session, show them
+  // right away. The fresh fetch then runs in the background and updates the UI
+  // silently when done.
+  const cached = loadItemsCache();
+  if (cached && cached.items.length > 0) {
+    allItems = cached.items;
+    document.getElementById('greeting').textContent = getGreeting();
+    document.getElementById('dateOnly').textContent = formatDate();
+    document.getElementById('updatedLine').textContent = 'Last updated: ' + timeAgo(cached.savedAt);
+    render();
+  }
+
+  loadAll(false);  // initial fetch — silent if we already rendered cached items
   setInterval(() => loadAll(false), REFRESH_MS);  // silent auto-refresh
 
   // Register service worker (enables PWA install + offline support)
