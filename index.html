@@ -519,6 +519,7 @@
   .source-tag.news { background: #1e4d6b; }
   .source-tag.india { background: #0f766e; }
   .source-tag.regional { background: #6d28d9; }
+  .source-tag.ideas-rss { background: #b45309; }
 
   .timestamp {
     font-family: 'JetBrains Mono', monospace;
@@ -632,6 +633,7 @@
   }
 
   /* Empty / loading states */
+  .state {
   .state {
     grid-column: 1 / -1;
     text-align: center;
@@ -754,6 +756,313 @@
     color: var(--ink-soft);
   }
 
+  /* ─── Card menu (⋯) — hide/dismiss actions ─── */
+  .card-menu-wrap { position: relative; display: inline-block; }
+  .card-menu-btn {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 6px;
+    line-height: 1;
+    transition: color 0.15s ease;
+  }
+  .card-menu-btn:hover { color: var(--ink); }
+  .card-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    min-width: 200px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    box-shadow: 0 6px 20px var(--shadow);
+    z-index: 30;
+    display: none;
+  }
+  .card-menu.open { display: block; }
+  .card-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dotted var(--rule);
+    color: var(--ink);
+    padding: 10px 14px;
+    cursor: pointer;
+    font-family: 'Newsreader', serif;
+    font-size: 14px;
+    transition: background 0.12s ease;
+  }
+  .card-menu button:last-child { border-bottom: none; }
+  .card-menu button:hover { background: var(--paper-deep); }
+  .card-menu button.danger:hover { background: var(--accent); color: white; }
+
+  /* ─── Settings button & modal ─── */
+  .settings-toggle {
+    position: fixed;
+    top: 20px;
+    right: 68px;
+    width: 40px;
+    height: 40px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    z-index: 100;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+  .settings-toggle:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: rotate(45deg); }
+
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(26, 22, 20, 0.45);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fade-in 0.2s ease;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    max-width: 540px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 28px 32px;
+    position: relative;
+  }
+  .modal h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 28px;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .modal .modal-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .modal-close:hover { background: var(--accent); color: white; border-color: var(--accent); }
+  .modal-section { margin-bottom: 24px; }
+  .modal-section label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .modal-section .hint {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .modal textarea {
+    width: 100%;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    min-height: 80px;
+    resize: vertical;
+    outline: none;
+  }
+  .modal textarea:focus { border-color: var(--ink); }
+  .hidden-source-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    padding: 6px 6px 6px 10px;
+    margin: 0 6px 6px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .hidden-source-pill button {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+  }
+  .hidden-source-pill button:hover { color: var(--accent); }
+  .modal-save {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 12px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .modal-save:hover { background: var(--accent); }
+
+  @media (max-width: 600px) {
+    .settings-toggle { right: 60px; top: 14px; width: 36px; height: 36px; font-size: 13px; }
+    .modal { padding: 22px 18px; }
+    .modal h2 { font-size: 22px; }
+  }
+
+  /* ─── Voice reader: Listen button, player widget, reading-highlighted card ─── */
+  .listen-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    min-height: 44px;
+  }
+  .listen-btn:hover { background: var(--ink); color: var(--paper); }
+  .listen-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* Sticky player widget at bottom of screen */
+  .player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--paper-deep);
+    border-top: 3px double var(--ink);
+    padding: 14px 24px;
+    z-index: 80;
+    box-shadow: 0 -6px 24px var(--shadow);
+    animation: player-slide 0.3s ease;
+  }
+  @keyframes player-slide {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .player-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .player-info { flex: 1; min-width: 0; }
+  .player-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .player-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.25;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .player-progress {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .player-controls { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .player-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.15s ease;
+  }
+  .player-btn:hover { border-color: var(--ink); background: var(--paper-deep); }
+  .player-btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); width: 50px; height: 50px; font-size: 22px; }
+  .player-btn.primary:hover { background: var(--accent); border-color: var(--accent); }
+  .player-btn.close-btn { font-size: 22px; }
+  .player-btn.close-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* Card being read — pulsing red border so user can see which one is playing */
+  .card.card-reading {
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft), 0 12px 28px var(--shadow);
+    animation: card-pulse 2s ease-in-out infinite;
+  }
+  @keyframes card-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px var(--accent-soft), 0 12px 28px var(--shadow); }
+    50%      { box-shadow: 0 0 0 8px var(--accent-soft), 0 12px 28px var(--shadow); }
+  }
+
+  @media (max-width: 600px) {
+    .player { padding: 12px 14px; }
+    .player-inner { gap: 10px; }
+    .player-title { font-size: 14px; }
+    .player-btn { width: 40px; height: 40px; font-size: 16px; }
+    .player-btn.primary { width: 46px; height: 46px; font-size: 20px; }
+    .player-btn.close-btn { display: none; } /* hide on mobile — use listen button to stop */
+    .listen-btn { width: 100%; justify-content: center; }
+  }
+
+  /* When voice player is visible, push content up so the last card isn't hidden */
+  body.player-active { padding-bottom: 96px; }
+  @media (max-width: 600px) {
+    body.player-active { padding-bottom: 110px; }
+  }
+
   /* Sticky controls bar (so refresh + filter are always reachable while scrolling) */
   .controls {
     position: sticky;
@@ -862,6 +1171,7 @@
 </head>
 <body>
 <button class="theme-toggle" id="themeToggle" title="Toggle dark mode" aria-label="Toggle theme">☾</button>
+<button class="settings-toggle" id="settingsToggle" title="Settings" aria-label="Settings">⚙</button>
 <div class="container">
 
   <header class="masthead">
@@ -893,6 +1203,9 @@
         <button class="filter-btn" data-source="saved">★ Saved<span class="count" id="savedCount" style="display:none">0</span></button>
       </div>
       <div class="control-right">
+        <button class="listen-btn" id="listenBtn" title="Read articles aloud">
+          <span>🔊</span><span>Listen</span>
+        </button>
         <button class="refresh-btn" id="refreshBtn">
           <span class="spinner">↻</span>
           <span>Refresh feed</span>
@@ -921,10 +1234,75 @@
 
 </div>
 
+<!-- Voice reader player widget — shows while reading aloud -->
+<div class="player" id="player" style="display:none">
+  <div class="player-inner">
+    <div class="player-info">
+      <div class="player-source" id="playerSource">—</div>
+      <div class="player-title" id="playerTitle">—</div>
+      <div class="player-progress" id="playerProgress">—</div>
+    </div>
+    <div class="player-controls">
+      <button class="player-btn" id="prevBtn" title="Previous article">⏮</button>
+      <button class="player-btn primary" id="playPauseBtn" title="Pause">⏸</button>
+      <button class="player-btn" id="nextBtn" title="Next article">⏭</button>
+      <button class="player-btn close-btn" id="stopBtn" title="Stop reading">×</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" id="modalCloseBtn" aria-label="Close">×</button>
+    <h2>Settings</h2>
+    <div class="modal-sub">— Filters & preferences —</div>
+
+    <div class="modal-section">
+      <label>Hide these keywords</label>
+      <div class="hint">Comma-separated. Posts whose title or body contains any of these words will be filtered out. E.g. <em>crypto, NFT, bitcoin</em></div>
+      <textarea id="keywordHideInput" placeholder="crypto, NFT, ..."></textarea>
+    </div>
+
+    <div class="modal-section">
+      <label>Sources you've hidden forever</label>
+      <div class="hint">Tap the × to bring a source back.</div>
+      <div id="hiddenSourcesList">— none —</div>
+    </div>
+
+    <button class="modal-save" id="modalSaveBtn">Save changes</button>
+  </div>
+</div>
+
+<!-- Silent audio loop — keeps OS recognizing app as "playing media" so lock-screen controls stay visible -->
+<audio id="silentAudio" loop preload="auto" style="display:none">
+  <source src="data:audio/wav;base64,UklGRsQPAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YaAPAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA" type="audio/wav">
+</audio>
+
 <script>
+  // ──────────────────────────────────────────────────────────────────────
+  // YOUR CLOUDFLARE WORKER URL — paste here after deploying worker.js.
+  // Example: 'https://coffee-headlines.your-name.workers.dev'
+  // Leave empty to fall back to public proxies (less reliable).
+  // ──────────────────────────────────────────────────────────────────────
+  const WORKER_URL = 'https://coffee-headlines.suneelchalla97.workers.dev';
+
   // ---------- Sources ----------
-  const REDDIT_SUBS = ['SomebodyMakeThis', 'AppIdeas', 'SaaSIdeas', 'Lightbulb', 'Startup_Ideas'];
-  const HN_QUERIES = ['app idea', 'startup idea', 'side project'];
+  // Cleaner Reddit subs — dropped r/Lightbulb (mostly spam), added quality ones.
+  const REDDIT_SUBS = [
+    'SomebodyMakeThis',
+    'AppIdeas',
+    'SaaSIdeas',
+    'Startup_Ideas',
+    'EntrepreneurRideAlong',
+    'sweatystartup',
+  ];
+  const HN_QUERIES = ['app idea', 'startup idea', 'side project', 'show hn'];
+  // Curated idea/founder RSS feeds — higher signal than generic Reddit
+  const IDEAS_FEEDS = [
+    { name: 'Indie Hackers',  url: 'https://www.indiehackers.com/feed.xml',           platform: 'ideas-rss' },
+    { name: 'Product Hunt',   url: 'https://www.producthunt.com/feed',                platform: 'ideas-rss' },
+  ];
   const NEWS_FEEDS = [
     { name: 'BBC News',     url: 'https://feeds.bbci.co.uk/news/world/rss.xml',         platform: 'news' },
     { name: 'Al Jazeera',   url: 'https://www.aljazeera.com/xml/rss/all.xml',            platform: 'news' },
@@ -955,9 +1333,10 @@
     { name: 'Deccan Chronicle · AP',  url: 'https://www.deccanchronicle.com/rss_feed/?section=nation/current-affairs',       platform: 'regional' },
   ];
   const REFRESH_MS = 10 * 60 * 1000; // 10 minutes
-  // Reddit blocks browser CORS, so we route through public proxies.
-  // We try each in order; if one fails (down, rate-limited), we fall through.
+  // Use the user's Cloudflare Worker (if configured) as the primary proxy,
+  // with public proxies as fallback if the worker is down or unset.
   const CORS_PROXIES = [
+    ...(WORKER_URL ? [url => `${WORKER_URL.replace(/\/+$/, '')}/proxy?url=${encodeURIComponent(url)}`] : []),
     url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
     url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     url => `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`,
@@ -999,7 +1378,7 @@
   let searchQuery = '';
 
   const FILTER_GROUPS = {
-    ideas:    ['reddit', 'hn'],
+    ideas:    ['reddit', 'hn', 'ideas-rss'],
     reddit:   ['reddit'],
     hn:       ['hn'],
     news:     ['news'],
@@ -1086,6 +1465,337 @@
       return data;
     } catch {
       return null;
+    }
+  }
+
+  // ---------- Hide controls + keyword filters ----------
+  const HIDDEN_URLS_KEY    = 'the-reader:hidden-urls';
+  const HIDDEN_SOURCES_KEY = 'the-reader:hidden-sources';      // forever
+  const HIDDEN_TODAY_KEY   = 'the-reader:hidden-sources-today'; // { source: dateString }
+  const KEYWORD_HIDE_KEY   = 'the-reader:keyword-hide';
+
+  function getHiddenUrls()    { try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_URLS_KEY) || '[]')); } catch { return new Set(); } }
+  function getHiddenSources() { try { return new Set(JSON.parse(localStorage.getItem(HIDDEN_SOURCES_KEY) || '[]')); } catch { return new Set(); } }
+  function getHiddenToday()   {
+    try {
+      const map = JSON.parse(localStorage.getItem(HIDDEN_TODAY_KEY) || '{}');
+      const today = new Date().toDateString();
+      // Auto-purge stale "today" entries
+      const fresh = {};
+      for (const k in map) if (map[k] === today) fresh[k] = today;
+      return fresh;
+    } catch { return {}; }
+  }
+  function getHideKeywords() {
+    try {
+      const raw = localStorage.getItem(KEYWORD_HIDE_KEY) || '';
+      return raw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    } catch { return []; }
+  }
+
+  function hideUrl(url) {
+    const set = getHiddenUrls();
+    set.add(url);
+    localStorage.setItem(HIDDEN_URLS_KEY, JSON.stringify([...set]));
+    render();
+  }
+  function hideSourceToday(source) {
+    const map = getHiddenToday();
+    map[source] = new Date().toDateString();
+    localStorage.setItem(HIDDEN_TODAY_KEY, JSON.stringify(map));
+    render();
+  }
+  function hideSourceForever(source) {
+    const set = getHiddenSources();
+    set.add(source);
+    localStorage.setItem(HIDDEN_SOURCES_KEY, JSON.stringify([...set]));
+    render();
+  }
+  function unhideSourceForever(source) {
+    const set = getHiddenSources();
+    set.delete(source);
+    localStorage.setItem(HIDDEN_SOURCES_KEY, JSON.stringify([...set]));
+    render();
+  }
+  function setHideKeywords(csv) {
+    localStorage.setItem(KEYWORD_HIDE_KEY, csv);
+    render();
+  }
+
+  // Cleanup hide-urls older than 14 days isn't needed since storage caps naturally low
+  window.hideUrl = hideUrl;
+  window.hideSourceToday = hideSourceToday;
+  window.hideSourceForever = hideSourceForever;
+  window.unhideSourceForever = unhideSourceForever;
+
+  function applyHideFilters(items) {
+    const hUrls = getHiddenUrls();
+    const hSources = getHiddenSources();
+    const hToday = getHiddenToday();
+    const keywords = getHideKeywords();
+    return items.filter(i => {
+      if (hUrls.has(i.url)) return false;
+      if (hSources.has(i.source)) return false;
+      if (hToday[i.source]) return false;
+      if (keywords.length) {
+        const blob = ((i.title || '') + ' ' + (i.preview || '')).toLowerCase();
+        if (keywords.some(k => blob.includes(k))) return false;
+      }
+      return true;
+    });
+  }
+
+  // ---------- Voice reader (Speech Synthesis + Media Session for lock-screen controls) ----------
+  let isReading = false;
+  let isPaused = false;
+  let readingItems = [];
+  let currentReadIndex = 0;
+  let currentUtterance = null;
+  let pickedVoice = null;
+
+  function pickBestVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) return null;
+    // Prefer English voices; en-IN > en-GB > en-US > any en
+    const score = v => {
+      const lang = (v.lang || '').toLowerCase();
+      if (lang === 'en-in') return 100;
+      if (lang.startsWith('en-gb')) return 80;
+      if (lang.startsWith('en-us')) return 70;
+      if (lang.startsWith('en')) return 50;
+      return 0;
+    };
+    return [...voices].sort((a, b) => score(b) - score(a))[0] || voices[0];
+  }
+  // Voices load asynchronously in some browsers
+  if ('speechSynthesis' in window) {
+    speechSynthesis.onvoiceschanged = () => { pickedVoice = pickBestVoice(); };
+    pickedVoice = pickBestVoice();
+  }
+
+  function buildSpeechText(item) {
+    const sourceLabel = item.source.replace(/^r\//, 'Reddit '); // "r/AppIdeas" → "Reddit AppIdeas"
+    let text = `From ${sourceLabel}. ${item.title}.`;
+    if (item.preview) text += ' ' + item.preview.slice(0, 600);
+    return text;
+  }
+
+  function highlightReadingCard(url) {
+    document.querySelectorAll('.card-reading').forEach(c => c.classList.remove('card-reading'));
+    if (!url) return;
+    try {
+      const card = document.querySelector(`.card[data-url="${CSS.escape(url)}"]`);
+      if (card) {
+        card.classList.add('card-reading');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } catch {}
+  }
+
+  function updatePlayerUI(item, idx, total) {
+    document.getElementById('playerSource').textContent = item.source;
+    document.getElementById('playerTitle').textContent = item.title;
+    document.getElementById('playerProgress').textContent = `${idx + 1} of ${total}`;
+    document.getElementById('player').style.display = 'block';
+  }
+
+  function updateMediaSession(item) {
+    if (!('mediaSession' in navigator)) return;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: item.title,
+        artist: item.source,
+        album: 'Coffee & Headlines',
+        artwork: [
+          { src: './icon-512.png', sizes: '512x512', type: 'image/png' }
+        ]
+      });
+      navigator.mediaSession.playbackState = 'playing';
+    } catch (e) {
+      console.warn('Media session error:', e);
+    }
+  }
+
+  // Fetch full article text from the Cloudflare Worker when available.
+  // Reddit/HN posts already have full text in `preview`, so only news items benefit.
+  async function getFullArticleText(item) {
+    if (!WORKER_URL) return null;
+    // Reddit/HN already carry full content
+    if (item.platform === 'reddit' || item.platform === 'hn') return null;
+    if (!item.url || !item.url.startsWith('http')) return null;
+    try {
+      const ctrl = new AbortController();
+      const timeout = setTimeout(() => ctrl.abort(), 4000);
+      const resp = await fetch(
+        `${WORKER_URL.replace(/\/+$/, '')}/article?url=${encodeURIComponent(item.url)}`,
+        { signal: ctrl.signal }
+      );
+      clearTimeout(timeout);
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      if (data && data.text && data.text.length > 200) return data.text;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function readCurrentItem() {
+    if (!isReading || currentReadIndex >= readingItems.length) {
+      stopReading();
+      return;
+    }
+    const item = readingItems[currentReadIndex];
+    highlightReadingCard(item.url);
+    updateMediaSession(item);
+    updatePlayerUI(item, currentReadIndex, readingItems.length);
+    document.body.classList.add('player-active');
+    markRead(item.url);
+
+    // Try fetching full article text for richer voice reading (news items only)
+    const fullText = await getFullArticleText(item);
+    if (!isReading) return; // user may have stopped while we were fetching
+
+    speechSynthesis.cancel();
+    const sourceLabel = item.source.replace(/^r\//, 'Reddit ');
+    let textToRead = `From ${sourceLabel}. ${item.title}.`;
+    if (fullText) {
+      textToRead += ' ' + fullText.slice(0, 4000);
+    } else if (item.preview) {
+      textToRead += ' ' + item.preview.slice(0, 600);
+    }
+
+    currentUtterance = new SpeechSynthesisUtterance(textToRead);
+    currentUtterance.rate = 0.95;
+    currentUtterance.pitch = 1.0;
+    if (pickedVoice) {
+      currentUtterance.voice = pickedVoice;
+      currentUtterance.lang = pickedVoice.lang;
+    } else {
+      currentUtterance.lang = 'en-US';
+    }
+    currentUtterance.onend = () => {
+      if (isReading && !isPaused) {
+        currentReadIndex++;
+        readCurrentItem();
+      }
+    };
+    currentUtterance.onerror = (e) => {
+      console.warn('Speech error:', e);
+      if (isReading) {
+        currentReadIndex++;
+        setTimeout(() => readCurrentItem(), 200);
+      }
+    };
+    speechSynthesis.speak(currentUtterance);
+  }
+
+  // Build the list of items the user currently sees (respecting filter + search + today-only)
+  function getVisibleItems() {
+    let items;
+    const isSavedTab = activeFilter === 'saved';
+    if (isSavedTab) {
+      const saved = getSaved();
+      items = Object.values(saved).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+    } else {
+      const allowed = FILTER_GROUPS[activeFilter] || [];
+      items = allItems.filter(i => allowed.includes(i.platform));
+    }
+    if (!isSavedTab) items = applyHideFilters(items);
+    if (todayOnly && !isSavedTab) items = items.filter(i => isToday(i.createdAt));
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      items = items.filter(i =>
+        (i.title || '').toLowerCase().includes(q) ||
+        (i.preview || '').toLowerCase().includes(q) ||
+        (i.source || '').toLowerCase().includes(q)
+      );
+    }
+    return items;
+  }
+
+  function startReading() {
+    if (!('speechSynthesis' in window)) {
+      alert("Sorry — your browser doesn't support voice reading.");
+      return;
+    }
+    readingItems = getVisibleItems();
+    if (readingItems.length === 0) {
+      alert('Nothing to read in this view — try another filter or clear the search.');
+      return;
+    }
+    currentReadIndex = 0;
+    isReading = true;
+    isPaused = false;
+
+    // Start the silent audio loop — this keeps the OS recognizing us as
+    // "playing media", which keeps the lock-screen controls visible & active.
+    const sa = document.getElementById('silentAudio');
+    if (sa) { sa.volume = 0.01; sa.play().catch(() => {}); }
+
+    document.getElementById('listenBtn').classList.add('active');
+    document.getElementById('listenBtn').querySelector('span:last-child').textContent = 'Stop';
+    document.getElementById('playPauseBtn').textContent = '⏸';
+    readCurrentItem();
+  }
+
+  function stopReading() {
+    speechSynthesis.cancel();
+    isReading = false;
+    isPaused = false;
+    currentUtterance = null;
+    const sa = document.getElementById('silentAudio');
+    if (sa) sa.pause();
+    document.getElementById('player').style.display = 'none';
+    document.body.classList.remove('player-active');
+    document.getElementById('listenBtn').classList.remove('active');
+    document.getElementById('listenBtn').querySelector('span:last-child').textContent = 'Listen';
+    highlightReadingCard(null);
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
+  }
+
+  function togglePlayPause() {
+    if (!isReading) { startReading(); return; }
+    if (isPaused) {
+      speechSynthesis.resume();
+      const sa = document.getElementById('silentAudio');
+      if (sa) sa.play().catch(() => {});
+      isPaused = false;
+      document.getElementById('playPauseBtn').textContent = '⏸';
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+    } else {
+      speechSynthesis.pause();
+      isPaused = true;
+      document.getElementById('playPauseBtn').textContent = '▶';
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+    }
+  }
+
+  function nextArticle() {
+    if (!isReading) return;
+    speechSynthesis.cancel();
+    currentReadIndex++;
+    if (currentReadIndex >= readingItems.length) stopReading();
+    else readCurrentItem();
+  }
+  function prevArticle() {
+    if (!isReading || currentReadIndex <= 0) return;
+    speechSynthesis.cancel();
+    currentReadIndex--;
+    readCurrentItem();
+  }
+
+  // Hook up Media Session action handlers (lock screen + headphone buttons)
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler('play',  () => togglePlayPause());
+      navigator.mediaSession.setActionHandler('pause', () => togglePlayPause());
+      navigator.mediaSession.setActionHandler('nexttrack',     () => nextArticle());
+      navigator.mediaSession.setActionHandler('previoustrack', () => prevArticle());
+      navigator.mediaSession.setActionHandler('stop',  () => stopReading());
+    } catch (e) {
+      console.warn('Media session handler setup:', e);
     }
   }
 
@@ -1343,6 +2053,9 @@
       items = allItems.filter(i => allowed.includes(i.platform));
     }
 
+    // Apply hide-this-post / hide-source-today/forever / keyword filters
+    if (!isSavedTab) items = applyHideFilters(items);
+
     // Today-only filter (skip for Saved tab — saved items should always show)
     if (todayOnly && !isSavedTab) {
       items = items.filter(i => isToday(i.createdAt));
@@ -1385,6 +2098,14 @@
       const saved = isSaved(item.url);
       const read = isRead(item.url);
       const saveBtn = `<button class="save-btn ${saved ? 'saved' : ''}" data-url="${escapeHtml(item.url)}" onclick="toggleSave(this)" title="${saved ? 'Unsave' : 'Save for later'}">${saved ? '★' : '☆'}</button>`;
+      const menuBtn = `<span class="card-menu-wrap">
+        <button class="card-menu-btn" onclick="toggleCardMenu(this, event)" title="More">⋯</button>
+        <div class="card-menu">
+          <button onclick="hideUrl('${escapeHtml(item.url)}'); event.stopPropagation();">Hide this post</button>
+          <button onclick="hideSourceToday('${escapeHtml(item.source)}'); event.stopPropagation();">Hide ${escapeHtml(item.source)} for today</button>
+          <button class="danger" onclick="hideSourceForever('${escapeHtml(item.source)}'); event.stopPropagation();">Hide ${escapeHtml(item.source)} forever</button>
+        </div>
+      </span>`;
       const isLong = item.preview && item.preview.length > 220;
       const previewHtml = item.preview
         ? `<p class="card-preview">${escapeHtml(item.preview)}</p>${isLong ? `<button class="expand-btn" onclick="toggleExpand(this); markRead('${escapeHtml(item.url)}')">Read full post ↓</button>` : ''}`
@@ -1398,9 +2119,10 @@
         ${imageHtml}
         <div class="card-head">
           <span class="source-tag ${item.platform}">${escapeHtml(item.source)}</span>
-          <div style="display:flex;align-items:center;gap:6px">
+          <div style="display:flex;align-items:center;gap:4px">
             <span class="timestamp">${timeAgo(item.createdAt)}</span>
             ${saveBtn}
+            ${menuBtn}
           </div>
         </div>
         <h2 class="card-title"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" ${onClick}>${escapeHtml(item.title)}</a></h2>
@@ -1456,6 +2178,7 @@
     const tasks = [
       ...REDDIT_SUBS.map(fetchReddit),
       ...HN_QUERIES.map(fetchHN),
+      ...IDEAS_FEEDS.map(fetchNewsFeed),
       ...NEWS_FEEDS.map(fetchNewsFeed),
       ...INDIA_FEEDS.map(fetchNewsFeed),
       ...REGIONAL_FEEDS.map(fetchNewsFeed),
@@ -1498,6 +2221,61 @@
   // ---------- Wiring ----------
   document.getElementById('refreshBtn').addEventListener('click', () => loadAll(true));
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+  // Voice reader buttons
+  document.getElementById('listenBtn').addEventListener('click', () => {
+    if (isReading) stopReading();
+    else startReading();
+  });
+  document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+  document.getElementById('nextBtn').addEventListener('click', nextArticle);
+  document.getElementById('prevBtn').addEventListener('click', prevArticle);
+  document.getElementById('stopBtn').addEventListener('click', stopReading);
+
+  // Card menu — toggle on click, close on outside click
+  window.toggleCardMenu = function(btn, event) {
+    event.stopPropagation();
+    const menu = btn.nextElementSibling;
+    const isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.card-menu.open').forEach(m => m.classList.remove('open'));
+    if (!isOpen) menu.classList.add('open');
+  };
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.card-menu.open').forEach(m => m.classList.remove('open'));
+  });
+
+  // Settings modal
+  const settingsModal = document.getElementById('settingsModal');
+  const keywordInput = document.getElementById('keywordHideInput');
+  const hiddenSourcesList = document.getElementById('hiddenSourcesList');
+
+  function refreshHiddenSourcesList() {
+    const set = getHiddenSources();
+    if (set.size === 0) {
+      hiddenSourcesList.innerHTML = '<em style="color:var(--ink-soft);font-family:Newsreader,serif">— none —</em>';
+      return;
+    }
+    hiddenSourcesList.innerHTML = [...set].map(s =>
+      `<span class="hidden-source-pill">${escapeHtml(s)}<button onclick="unhideSourceForever('${escapeHtml(s)}'); document.getElementById('settingsToggle').click(); document.getElementById('settingsToggle').click();" title="Unhide">×</button></span>`
+    ).join('');
+  }
+
+  function openSettings() {
+    keywordInput.value = localStorage.getItem(KEYWORD_HIDE_KEY) || '';
+    refreshHiddenSourcesList();
+    settingsModal.classList.add('open');
+  }
+  function closeSettings() { settingsModal.classList.remove('open'); }
+
+  document.getElementById('settingsToggle').addEventListener('click', openSettings);
+  document.getElementById('modalCloseBtn').addEventListener('click', closeSettings);
+  document.getElementById('modalSaveBtn').addEventListener('click', () => {
+    setHideKeywords(keywordInput.value);
+    closeSettings();
+  });
+  settingsModal.addEventListener('click', e => {
+    if (e.target === settingsModal) closeSettings();
+  });
 
   document.getElementById('filters').addEventListener('click', e => {
     const btn = e.target.closest('.filter-btn');
