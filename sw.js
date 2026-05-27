@@ -1,6 +1,6 @@
 // Service worker for Coffee & Headlines
 // Caches the app shell so the page launches offline and qualifies for PWA install.
-const CACHE_NAME = 'coffee-headlines-v7';
+const CACHE_NAME = 'coffee-headlines-v8';
 const APP_SHELL = ['./', './index.html', './icon-512.png'];
 
 self.addEventListener('install', (event) => {
