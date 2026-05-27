@@ -765,12 +765,15 @@
   }
 
   @media (max-width: 600px) {
+    /* Lock page width — nothing should cause horizontal scroll */
+    html, body { overflow-x: hidden; max-width: 100vw; }
+
     body { font-size: 16px; }
-    .container { padding: 24px 14px 60px; }
+    .container { padding: 24px 14px 60px; max-width: 100%; }
 
     /* Compact masthead on mobile */
     .masthead { padding: 16px 0 14px; margin-bottom: 20px; }
-    .title { font-size: 56px; }
+    .title { font-size: 56px; word-break: break-word; }
     .subtitle { font-size: 15px; margin-top: 8px; }
     .eyebrow { margin-bottom: 8px; }
     .masthead-meta {
@@ -781,7 +784,6 @@
       font-size: 10px;
     }
 
-    /* Horizontally-scrolling filter tabs (so they don't wrap awkwardly) */
     .controls {
       flex-direction: column;
       align-items: stretch;
@@ -792,22 +794,36 @@
       border-left: none;
       border-right: none;
     }
+
+    /* Filter tabs: 4-column grid so all 7 are visible without scrolling.
+       Row 1: Ideas | Reddit | Hacker News | World News
+       Row 2: India News | Regional | ★ Saved | (empty) */
     .filters {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      gap: 6px;
-      padding-bottom: 4px;
-      scrollbar-width: none;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      overflow: visible;
+      padding-bottom: 0;
+      width: 100%;
     }
-    .filters::-webkit-scrollbar { display: none; }
     .filter-btn {
-      flex-shrink: 0;
-      scroll-snap-align: start;
-      padding: 10px 14px;
-      min-height: 40px;
+      padding: 10px 2px;
+      font-size: 9px;
+      letter-spacing: 0.04em;
+      min-height: 44px;
+      min-width: 0;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
     }
+    .filter-btn .count {
+      margin-left: 3px;
+      padding: 1px 4px;
+      font-size: 8px;
+    }
+
     .refresh-btn {
       width: 100%;
       justify-content: center;
@@ -815,9 +831,17 @@
       padding: 12px 18px;
     }
 
-    /* Card tweaks */
+    /* Card tweaks — ensure long words/URLs break instead of overflowing */
     .feed { grid-template-columns: 1fr; gap: 14px; }
-    .card { padding: 18px 16px 14px; }
+    .card {
+      padding: 18px 16px 14px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .card-title, .card-preview, .card-title a {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     .card-title { font-size: 20px; }
     .open-link { padding: 4px 0; }
     .expand-btn { padding: 8px 0 12px; min-height: 36px; }
