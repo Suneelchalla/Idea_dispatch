@@ -61,6 +61,7 @@
   [data-theme="dark"] .source-tag.news { background: #3b82f6; }
   [data-theme="dark"] .source-tag.india { background: #14b8a6; }
   [data-theme="dark"] .source-tag.regional { background: #a78bfa; }
+  [data-theme="dark"] .source-tag.marine { background: #22d3ee; color: #0c0a09; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -425,6 +426,31 @@
     border-color: var(--ink);
   }
 
+  /* Region sub-filter dropdown — appears next to Regional button when that filter is active */
+  .region-select {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--paper-deep);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 7px 26px 7px 12px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+                      linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    transition: background-color 0.15s ease;
+  }
+  .region-select.visible { display: inline-block; }
+  .region-select:hover { background-color: var(--paper); }
+
   .refresh-btn {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -520,6 +546,7 @@
   .source-tag.india { background: #0f766e; }
   .source-tag.regional { background: #6d28d9; }
   .source-tag.ideas-rss { background: #b45309; }
+  .source-tag.marine { background: #075985; }
 
   .timestamp {
     font-family: 'JetBrains Mono', monospace;
@@ -938,6 +965,81 @@
   }
   .modal-save:hover { background: var(--accent); }
 
+  /* Voice reader settings UI */
+  .modal-section select.voice-select {
+    width: 100%;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 10px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+  .modal-section select.voice-select:focus { border-color: var(--ink); }
+
+  .voice-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .voice-slider-row > span:first-child {
+    min-width: 48px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .voice-slider-row > span:last-child {
+    min-width: 46px;
+    text-align: right;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .voice-slider {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--rule);
+    border-radius: 2px;
+    outline: none;
+  }
+  .voice-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .voice-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  .voice-test-btn {
+    margin-top: 14px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    padding: 10px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .voice-test-btn:hover { background: var(--ink); color: var(--paper); }
+  .voice-test-btn.speaking { background: var(--accent); color: white; border-color: var(--accent); }
+
   @media (max-width: 600px) {
     .settings-toggle { right: 60px; top: 14px; width: 36px; height: 36px; font-size: 13px; }
     .modal { padding: 22px 18px; }
@@ -945,25 +1047,27 @@
   }
 
   /* ─── Voice reader: Listen button, player widget, reading-highlighted card ─── */
-  .listen-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    background: var(--paper);
-    border: 1px solid var(--ink);
-    color: var(--ink);
-    padding: 10px 16px;
+  .listen-btn,
+  .listen-btn:hover,
+  .listen-btn.active { display: none !important; } /* removed: global Listen button replaced by per-card 🔊 buttons */
+
+  /* Per-card listen button (🔊 on each card) */
+  .listen-card-btn {
+    background: transparent;
+    border: none;
     cursor: pointer;
-    transition: all 0.15s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-    min-height: 44px;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 6px;
+    color: var(--ink-soft);
+    transition: transform 0.15s ease, color 0.15s ease;
   }
-  .listen-btn:hover { background: var(--ink); color: var(--paper); }
-  .listen-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .listen-card-btn:hover { transform: scale(1.15); color: var(--accent); }
+  .listen-card-btn.playing { color: var(--accent); animation: listen-pulse 1.4s ease-in-out infinite; }
+  @keyframes listen-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.45; }
+  }
 
   /* Sticky player widget at bottom of screen */
   .player {
@@ -1052,8 +1156,7 @@
     .player-title { font-size: 14px; }
     .player-btn { width: 40px; height: 40px; font-size: 16px; }
     .player-btn.primary { width: 46px; height: 46px; font-size: 20px; }
-    .player-btn.close-btn { display: none; } /* hide on mobile — use listen button to stop */
-    .listen-btn { width: 100%; justify-content: center; }
+    .player-btn.close-btn { display: none; } /* hide on mobile — use stop in player to stop */
   }
 
   /* When voice player is visible, push content up so the last card isn't hidden */
@@ -1199,12 +1302,14 @@
         <button class="filter-btn" data-source="news">World News</button>
         <button class="filter-btn" data-source="india">India News</button>
         <button class="filter-btn" data-source="regional">Regional</button>
+        <select class="region-select" id="regionSelect" aria-label="Select region">
+          <option value="tn">Tamil Nadu</option>
+          <option value="ap">Andhra Pradesh</option>
+        </select>
+        <button class="filter-btn" data-source="marine">Marine</button>
         <button class="filter-btn" data-source="saved">★ Saved<span class="count" id="savedCount" style="display:none">0</span></button>
       </div>
       <div class="control-right">
-        <button class="listen-btn" id="listenBtn" title="Read articles aloud">
-          <span>🔊</span><span>Listen</span>
-        </button>
         <button class="refresh-btn" id="refreshBtn">
           <span class="spinner">↻</span>
           <span>Refresh feed</span>
@@ -1256,6 +1361,25 @@
     <button class="modal-close" id="modalCloseBtn" aria-label="Close">×</button>
     <h2>Settings</h2>
     <div class="modal-sub">— Filters & preferences —</div>
+
+    <div class="modal-section">
+      <label>Voice reader</label>
+      <div class="hint">Pick the voice and pace for the Listen feature. Voices marked <em>★ Premium</em> sound far more natural &mdash; your device may already have them. On iPhone, try the Siri-family voices. On Android Chrome, try the Google voices. On Edge, look for the Neural ones.</div>
+      <select class="voice-select" id="voiceSelect">
+        <option value="">Loading voices…</option>
+      </select>
+      <div class="voice-slider-row">
+        <span>Speed</span>
+        <input type="range" class="voice-slider" id="speedSlider" min="0.8" max="1.3" step="0.05" value="1.0">
+        <span id="speedValue">1.00×</span>
+      </div>
+      <div class="voice-slider-row">
+        <span>Pitch</span>
+        <input type="range" class="voice-slider" id="pitchSlider" min="0.8" max="1.2" step="0.05" value="1.0">
+        <span id="pitchValue">1.00</span>
+      </div>
+      <button class="voice-test-btn" id="voiceTestBtn">▶ Preview voice</button>
+    </div>
 
     <div class="modal-section">
       <label>Hide these keywords</label>
@@ -1322,14 +1446,24 @@
   ];
   const REGIONAL_FEEDS = [
     // Tamil Nadu
-    { name: 'Hindu · Tamil Nadu',    url: 'https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss',           platform: 'regional' },
-    { name: 'TOI · Chennai',         url: 'https://timesofindia.indiatimes.com/rssfeeds/-2128816011.cms',                   platform: 'regional' },
-    { name: 'Express · Tamil Nadu',  url: 'https://www.newindianexpress.com/Nation/Tamil-Nadu/rssfeed/?id=183&getXmlFeed=true', platform: 'regional' },
-    // Andhra Pradesh
-    { name: 'Hindu · Andhra Pradesh', url: 'https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss',       platform: 'regional' },
-    { name: 'TOI · Hyderabad',        url: 'https://timesofindia.indiatimes.com/rssfeeds/-2128816905.cms',                   platform: 'regional' },
-    { name: 'Hindu · Telangana',      url: 'https://www.thehindu.com/news/national/telangana/feeder/default.rss',            platform: 'regional' },
-    { name: 'Deccan Chronicle · AP',  url: 'https://www.deccanchronicle.com/rss_feed/?section=nation/current-affairs',       platform: 'regional' },
+    { name: 'Hindu · Tamil Nadu',    url: 'https://www.thehindu.com/news/national/tamil-nadu/feeder/default.rss',           platform: 'regional', region: 'tn' },
+    { name: 'TOI · Chennai',         url: 'https://timesofindia.indiatimes.com/rssfeeds/-2128816011.cms',                   platform: 'regional', region: 'tn' },
+    { name: 'Express · Tamil Nadu',  url: 'https://www.newindianexpress.com/Nation/Tamil-Nadu/rssfeed/?id=183&getXmlFeed=true', platform: 'regional', region: 'tn' },
+    // Andhra Pradesh (Telangana folded in — shared Telugu coverage)
+    { name: 'Hindu · Andhra Pradesh', url: 'https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss',       platform: 'regional', region: 'ap' },
+    { name: 'TOI · Hyderabad',        url: 'https://timesofindia.indiatimes.com/rssfeeds/-2128816905.cms',                   platform: 'regional', region: 'ap' },
+    { name: 'Hindu · Telangana',      url: 'https://www.thehindu.com/news/national/telangana/feeder/default.rss',            platform: 'regional', region: 'ap' },
+    { name: 'Deccan Chronicle · AP',  url: 'https://www.deccanchronicle.com/rss_feed/?section=nation/current-affairs',       platform: 'regional', region: 'ap' },
+  ];
+  // Marine & shipping industry feeds — global maritime news, with Marine Insight
+  // adding India-focused coverage.
+  const MARINE_FEEDS = [
+    { name: 'gCaptain',           url: 'https://feeds.feedburner.com/gcaptain',              platform: 'marine' },
+    { name: 'Splash247',          url: 'https://splash247.com/feed/',                        platform: 'marine' },
+    { name: 'Maritime Executive', url: 'https://www.maritime-executive.com/articles.rss',    platform: 'marine' },
+    { name: 'Marine Insight',     url: 'https://www.marineinsight.com/feed/',                platform: 'marine' },
+    { name: 'MarineLink',         url: 'https://www.marinelink.com/news/rss',                platform: 'marine' },
+    { name: 'Hellenic Shipping',  url: 'https://www.hellenicshippingnews.com/feed/',         platform: 'marine' },
   ];
   const REFRESH_MS = 10 * 60 * 1000; // 10 minutes
   // Use the user's Cloudflare Worker (if configured) as the primary proxy,
@@ -1375,6 +1509,15 @@
   let activeFilter = 'ideas';
   let todayOnly = true;
   let searchQuery = '';
+  // Active sub-filter for the "Regional" tab — 'tn' (Tamil Nadu) or 'ap' (Andhra Pradesh).
+  // Defaults to Tamil Nadu since the app's primary user is located there.
+  const REGION_KEY = 'coffee-headlines:region';
+  let activeRegion = (() => {
+    try {
+      const v = localStorage.getItem(REGION_KEY);
+      return (v === 'tn' || v === 'ap') ? v : 'tn';
+    } catch { return 'tn'; }
+  })();
 
   const FILTER_GROUPS = {
     ideas:    ['reddit', 'hn', 'ideas-rss'],
@@ -1383,6 +1526,7 @@
     news:     ['news'],
     india:    ['india'],
     regional: ['regional'],
+    marine:   ['marine'],
     saved:    ['__saved__'],
   };
 
@@ -1438,6 +1582,7 @@
         items: items.slice(0, 80).map(i => ({
           source: i.source,
           platform: i.platform,
+          region: i.region || null,
           title: i.title,
           preview: i.preview ? i.preview.slice(0, 500) : '',
           image: i.image || '',
@@ -1461,6 +1606,11 @@
       const data = JSON.parse(raw);
       if (!data.items || !Array.isArray(data.items) || !data.savedAt) return null;
       if (Date.now() - data.savedAt > ITEMS_CACHE_TTL) return null;
+      // Retroactively strip HN prefixes from cached titles so the fix is visible
+      // on first load, without waiting for the next fetch.
+      data.items.forEach(i => {
+        if (i.platform === 'hn') i.title = cleanHNTitle(i.title);
+      });
       return data;
     } catch {
       return null;
@@ -1551,33 +1701,131 @@
   let currentReadIndex = 0;
   let currentUtterance = null;
   let pickedVoice = null;
+  // Chunked playback state — we read each article as multiple utterances with
+  // different prosody (intro / headline / body) so the delivery sounds like a
+  // news reader rather than a flat robot.
+  let currentChunks = [];
+  let currentChunkIndex = 0;
+  // User-tunable voice settings
+  let userRate = 1.0;
+  let userPitch = 1.0;
+
+  const VOICE_NAME_KEY  = 'coffee-headlines:voice-name';
+  const VOICE_RATE_KEY  = 'coffee-headlines:voice-rate';
+  const VOICE_PITCH_KEY = 'coffee-headlines:voice-pitch';
+
+  function loadVoiceSettings() {
+    try {
+      const r = parseFloat(localStorage.getItem(VOICE_RATE_KEY));
+      if (!isNaN(r)) userRate = Math.max(0.7, Math.min(1.5, r));
+      const p = parseFloat(localStorage.getItem(VOICE_PITCH_KEY));
+      if (!isNaN(p)) userPitch = Math.max(0.8, Math.min(1.3, p));
+    } catch {}
+  }
+
+  // Score a voice for quality. Higher = better. Negative = skip.
+  // Strategy: heavy boost for known "premium / neural / natural" variants in
+  // the name, modest boost for known good families (MS neural, Apple Siri,
+  // Google), heavy penalty for Mac novelty voices (Albert, Zarvox, Bells, etc).
+  function scoreVoice(v) {
+    const name = (v.name || '').toLowerCase();
+    const lang = (v.lang || '').toLowerCase();
+    if (!lang.startsWith('en')) return -1;
+
+    let score = 0;
+    // Language preference — en-IN first (matches your locale), then en-GB, en-US, others
+    if (lang === 'en-in')             score += 50;
+    else if (lang.startsWith('en-gb')) score += 45;
+    else if (lang.startsWith('en-us')) score += 40;
+    else if (lang.startsWith('en-au') || lang.startsWith('en-ca')) score += 35;
+    else                               score += 30;
+
+    // Strong boost for explicit quality markers
+    if (/(neural|natural|premium|enhanced|wavenet|studio|online)/i.test(name)) score += 150;
+
+    // Known modern high-quality voice families
+    if (/(aria|guy|jenny|davis|tony|nancy|jane|sara|brian|emma|libby|ryan|sonia|natasha|william|prabhat|neerja)/i.test(name)) score += 50; // MS neural
+    if (/(google.*english|chrome os)/i.test(name)) score += 40;
+    if (/^(samantha|alex|daniel|karen|moira|tessa|veena|rishi|nicky|aaron|fiona|allison|ava|susan|tom|isha|martha|oliver|catherine)/i.test(name)) score += 35; // Apple/Siri family
+
+    // Heavy penalty for known novelty / low-quality voices (mostly Mac classics)
+    if (/(albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|jester|junior|kathy|organ|pipe|princess|ralph|trinoids|whisper|zarvox|grandma|grandpa|reed|rocko|sandy|shelley|flo|eddy|wobble)/i.test(name)) score -= 300;
+
+    // Local voices generally have lower latency
+    if (v.localService) score += 8;
+
+    return score;
+  }
 
   function pickBestVoice() {
     if (!('speechSynthesis' in window)) return null;
     const voices = speechSynthesis.getVoices();
     if (!voices.length) return null;
-    // Prefer English voices; en-IN > en-GB > en-US > any en
-    const score = v => {
-      const lang = (v.lang || '').toLowerCase();
-      if (lang === 'en-in') return 100;
-      if (lang.startsWith('en-gb')) return 80;
-      if (lang.startsWith('en-us')) return 70;
-      if (lang.startsWith('en')) return 50;
-      return 0;
-    };
-    return [...voices].sort((a, b) => score(b) - score(a))[0] || voices[0];
+
+    // Respect user's manual pick if set
+    const userPick = (() => { try { return localStorage.getItem(VOICE_NAME_KEY); } catch { return null; } })();
+    if (userPick) {
+      const found = voices.find(v => v.name === userPick);
+      if (found) return found;
+    }
+    return [...voices].sort((a, b) => scoreVoice(b) - scoreVoice(a))[0] || voices[0];
   }
   // Voices load asynchronously in some browsers
   if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = () => { pickedVoice = pickBestVoice(); };
+    speechSynthesis.onvoiceschanged = () => {
+      pickedVoice = pickBestVoice();
+      // If the settings modal is open, refresh the voice dropdown so newly
+      // loaded voices appear.
+      if (document.getElementById('settingsModal')?.classList.contains('open')) {
+        populateVoiceDropdown();
+      }
+    };
     pickedVoice = pickBestVoice();
   }
 
-  function buildSpeechText(item) {
-    const sourceLabel = item.source.replace(/^r\//, 'Reddit '); // "r/AppIdeas" → "Reddit AppIdeas"
-    let text = `From ${sourceLabel}. ${item.title}.`;
-    if (item.preview) text += ' ' + item.preview.slice(0, 600);
-    return text;
+  // Clean RSS/feed text so it reads naturally — strip URLs, expand common
+  // abbreviations, normalize symbols and quotes. Most of these throw off the
+  // default TTS engine's prosody if left raw.
+  function cleanTextForSpeech(text) {
+    if (!text) return '';
+    return text
+      .replace(/https?:\/\/\S+/g, '')                    // URLs
+      .replace(/\[\+?\d+\s*chars?\]/gi, '')              // [+1234 chars]
+      .replace(/(continue reading|read more|click here|read the full[^.]*|read on at)[^.]*\.?$/gi, '')
+      .replace(/\bU\.S\.A?\.?\b/g, 'U S A')
+      .replace(/\bU\.K\.\b/g, 'U K')
+      .replace(/\bU\.S\.\b/g, 'U S')
+      .replace(/\bE\.U\.\b/g, 'E U')
+      .replace(/\bvs\.?\b/gi, 'versus')
+      .replace(/\bMr\.\s+/g, 'Mister ')
+      .replace(/\bMrs\.\s+/g, 'Missus ')
+      .replace(/\bMs\.\s+/g, 'Miz ')
+      .replace(/\bDr\.\s+/g, 'Doctor ')
+      .replace(/\bSt\.\s+/g, 'Saint ')
+      .replace(/\bJr\.\s+/g, 'Junior ')
+      .replace(/\bSr\.\s+/g, 'Senior ')
+      .replace(/(\d+)\s*%/g, '$1 percent')
+      .replace(/\$(\d+(?:\.\d+)?)/g, '$1 dollars')
+      .replace(/₹(\d+(?:\.\d+)?)/g, '$1 rupees')
+      .replace(/[—–]/g, ', ')                            // em/en dashes → comma pauses
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, ' and ')
+      .replace(/&[a-z]+;/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  // Split body text into sentences so we can chunk the speech into smaller
+  // utterances. Smaller chunks give the TTS engine natural pauses and let the
+  // user pause/skip more responsively.
+  function splitIntoSentences(text) {
+    if (!text) return [];
+    return text
+      .split(/(?<=[.!?])\s+(?=[A-Z"'])/)
+      .map(s => s.trim())
+      .filter(Boolean);
   }
 
   function highlightReadingCard(url) {
@@ -1640,6 +1888,73 @@
     }
   }
 
+  // Build chunks for one article — each chunk is a small utterance with its
+  // own rate/pitch offset so the delivery has natural variation:
+  //   • Intro ("From BBC News.")        → slower, lower pitch (anchor voice)
+  //   • Headline                         → slightly slower, slightly higher (emphasis)
+  //   • Body sentences (pairs)           → normal rate & pitch, paused per pair
+  function buildChunksForItem(item, fullText) {
+    const sourceLabel = item.source.replace(/^r\//, 'Reddit ');
+    let body = '';
+    if (fullText) body = fullText.slice(0, 4000);
+    else if (item.preview) body = item.preview.slice(0, 800);
+
+    const cleanHeadline = cleanTextForSpeech(item.title);
+    const cleanBody     = cleanTextForSpeech(body);
+
+    const chunks = [
+      { text: `From ${sourceLabel}.`,                                rateOffset: -0.15, pitchMul: 0.88 },
+      { text: cleanHeadline.replace(/[.!?]?$/, '.'),                 rateOffset: -0.08, pitchMul: 1.08 },
+    ];
+
+    if (cleanBody) {
+      const sentences = splitIntoSentences(cleanBody);
+      for (let i = 0; i < sentences.length; i += 2) {
+        const text = sentences.slice(i, i + 2).join(' ').trim();
+        if (text) chunks.push({ text, rateOffset: 0, pitchMul: 1.0 });
+      }
+    }
+    return chunks;
+  }
+
+  function playNextChunk() {
+    if (!isReading) return;
+    if (currentChunkIndex >= currentChunks.length) {
+      // Done with this article — advance to next item
+      if (isReading && !isPaused) {
+        currentReadIndex++;
+        readCurrentItem();
+      }
+      return;
+    }
+    const chunk = currentChunks[currentChunkIndex];
+    const u = new SpeechSynthesisUtterance(chunk.text);
+    if (pickedVoice) {
+      u.voice = pickedVoice;
+      u.lang  = pickedVoice.lang;
+    } else {
+      u.lang = 'en-US';
+    }
+    u.rate   = Math.max(0.5, Math.min(2.0, userRate + (chunk.rateOffset || 0)));
+    u.pitch  = Math.max(0.6, Math.min(1.5, userPitch * (chunk.pitchMul || 1.0)));
+    u.volume = 1.0;
+    u.onend = () => {
+      if (isReading && !isPaused) {
+        currentChunkIndex++;
+        playNextChunk();
+      }
+    };
+    u.onerror = (e) => {
+      console.warn('Speech error:', e);
+      if (isReading) {
+        currentChunkIndex++;
+        setTimeout(playNextChunk, 150);
+      }
+    };
+    currentUtterance = u;
+    speechSynthesis.speak(u);
+  }
+
   async function readCurrentItem() {
     if (!isReading || currentReadIndex >= readingItems.length) {
       stopReading();
@@ -1647,6 +1962,7 @@
     }
     const item = readingItems[currentReadIndex];
     highlightReadingCard(item.url);
+    refreshListenButtons();
     updateMediaSession(item);
     updatePlayerUI(item, currentReadIndex, readingItems.length);
     document.body.classList.add('player-active');
@@ -1657,37 +1973,9 @@
     if (!isReading) return; // user may have stopped while we were fetching
 
     speechSynthesis.cancel();
-    const sourceLabel = item.source.replace(/^r\//, 'Reddit ');
-    let textToRead = `From ${sourceLabel}. ${item.title}.`;
-    if (fullText) {
-      textToRead += ' ' + fullText.slice(0, 4000);
-    } else if (item.preview) {
-      textToRead += ' ' + item.preview.slice(0, 600);
-    }
-
-    currentUtterance = new SpeechSynthesisUtterance(textToRead);
-    currentUtterance.rate = 0.95;
-    currentUtterance.pitch = 1.0;
-    if (pickedVoice) {
-      currentUtterance.voice = pickedVoice;
-      currentUtterance.lang = pickedVoice.lang;
-    } else {
-      currentUtterance.lang = 'en-US';
-    }
-    currentUtterance.onend = () => {
-      if (isReading && !isPaused) {
-        currentReadIndex++;
-        readCurrentItem();
-      }
-    };
-    currentUtterance.onerror = (e) => {
-      console.warn('Speech error:', e);
-      if (isReading) {
-        currentReadIndex++;
-        setTimeout(() => readCurrentItem(), 200);
-      }
-    };
-    speechSynthesis.speak(currentUtterance);
+    currentChunks = buildChunksForItem(item, fullText);
+    currentChunkIndex = 0;
+    playNextChunk();
   }
 
   // Build the list of items the user currently sees (respecting filter + search + today-only)
@@ -1700,6 +1988,10 @@
     } else {
       const allowed = FILTER_GROUPS[activeFilter] || [];
       items = allItems.filter(i => allowed.includes(i.platform));
+    }
+    // Regional sub-filter (TN vs AP)
+    if (activeFilter === 'regional') {
+      items = items.filter(i => i.region === activeRegion);
     }
     if (!isSavedTab) items = applyHideFilters(items);
     if (todayOnly && !isSavedTab) items = items.filter(i => isToday(i.createdAt));
@@ -1714,7 +2006,24 @@
     return items;
   }
 
-  function startReading() {
+  // Refresh the visual state of every per-card 🔊 button so the one currently
+  // playing shows the pulsing pause icon, and the rest show the speaker icon.
+  function refreshListenButtons() {
+    const currentUrl = isReading && readingItems[currentReadIndex]
+      ? readingItems[currentReadIndex].url
+      : null;
+    document.querySelectorAll('.listen-card-btn').forEach(btn => {
+      const playing = btn.dataset.url === currentUrl;
+      btn.classList.toggle('playing', playing);
+      btn.textContent = playing ? '⏸' : '🔊';
+      btn.title = playing ? 'Stop reading' : 'Listen to this article';
+    });
+  }
+
+  // Start the reader. If startUrl is provided, seek to that article in the
+  // visible feed; otherwise start from the top. The whole visible feed remains
+  // the queue, so prev/next still work from the player widget.
+  function startReading(startUrl) {
     if (!('speechSynthesis' in window)) {
       alert("Sorry — your browser doesn't support voice reading.");
       return;
@@ -1724,7 +2033,23 @@
       alert('Nothing to read in this view — try another filter or clear the search.');
       return;
     }
-    currentReadIndex = 0;
+    let startIdx = 0;
+    if (startUrl) {
+      const idx = readingItems.findIndex(i => i.url === startUrl);
+      if (idx >= 0) {
+        startIdx = idx;
+      } else {
+        // The clicked card isn't in the visible queue (e.g. user is on Saved
+        // tab but clicked from another). Read just that one article.
+        const saved = getSaved();
+        const item = saved[startUrl] || allItems.find(i => i.url === startUrl);
+        if (item) {
+          readingItems = [item];
+          startIdx = 0;
+        }
+      }
+    }
+    currentReadIndex = startIdx;
     isReading = true;
     isPaused = false;
 
@@ -1733,9 +2058,8 @@
     const sa = document.getElementById('silentAudio');
     if (sa) { sa.volume = 0.01; sa.play().catch(() => {}); }
 
-    document.getElementById('listenBtn').classList.add('active');
-    document.getElementById('listenBtn').querySelector('span:last-child').textContent = 'Stop';
     document.getElementById('playPauseBtn').textContent = '⏸';
+    refreshListenButtons();
     readCurrentItem();
   }
 
@@ -1744,15 +2068,52 @@
     isReading = false;
     isPaused = false;
     currentUtterance = null;
+    currentChunks = [];
+    currentChunkIndex = 0;
     const sa = document.getElementById('silentAudio');
     if (sa) sa.pause();
     document.getElementById('player').style.display = 'none';
     document.body.classList.remove('player-active');
-    document.getElementById('listenBtn').classList.remove('active');
-    document.getElementById('listenBtn').querySelector('span:last-child').textContent = 'Listen';
     highlightReadingCard(null);
+    refreshListenButtons();
     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
   }
+
+  // Click handler for the 🔊 button on each card.
+  //   • If nothing is playing → start reading from this article
+  //   • If this article is the one being read → stop reading
+  //   • If a different article is playing → switch to this one
+  window.toggleListen = function(btn) {
+    const url = btn.dataset.url;
+    if (!url) return;
+    const playingThis = isReading
+      && readingItems[currentReadIndex]
+      && readingItems[currentReadIndex].url === url;
+    if (playingThis) {
+      stopReading();
+    } else {
+      if (isReading) {
+        // switch to the new article without tearing the player down
+        speechSynthesis.cancel();
+        currentChunks = [];
+        currentChunkIndex = 0;
+        readingItems = getVisibleItems();
+        const idx = readingItems.findIndex(i => i.url === url);
+        if (idx >= 0) {
+          currentReadIndex = idx;
+        } else {
+          const item = allItems.find(i => i.url === url) || (getSaved()[url]);
+          if (item) { readingItems = [item]; currentReadIndex = 0; }
+        }
+        isPaused = false;
+        document.getElementById('playPauseBtn').textContent = '⏸';
+        refreshListenButtons();
+        readCurrentItem();
+      } else {
+        startReading(url);
+      }
+    }
+  };
 
   function togglePlayPause() {
     if (!isReading) { startReading(); return; }
@@ -1774,6 +2135,8 @@
   function nextArticle() {
     if (!isReading) return;
     speechSynthesis.cancel();
+    currentChunks = [];
+    currentChunkIndex = 0;
     currentReadIndex++;
     if (currentReadIndex >= readingItems.length) stopReading();
     else readCurrentItem();
@@ -1781,6 +2144,8 @@
   function prevArticle() {
     if (!isReading || currentReadIndex <= 0) return;
     speechSynthesis.cancel();
+    currentChunks = [];
+    currentChunkIndex = 0;
     currentReadIndex--;
     readCurrentItem();
   }
@@ -1930,6 +2295,15 @@
     }
   }
 
+  // Hacker News uses long-standing prefixes ("Show HN:", "Ask HN:", "Tell HN:",
+  // "Launch HN:") so the community can spot showcase / question / launch posts
+  // at a glance. In a news-reader context they're just noise — the "Hacker News"
+  // source tag already says where the post came from — so we strip them.
+  function cleanHNTitle(title) {
+    if (!title) return '';
+    return title.replace(/^\s*(show|ask|tell|launch)\s+hn\s*[:\-–—]\s*/i, '').trim() || title;
+  }
+
   async function fetchHN(query) {
     try {
       const url = `https://hn.algolia.com/api/v1/search_by_date?tags=story&query=${encodeURIComponent(query)}&hitsPerPage=15`;
@@ -1951,7 +2325,7 @@
         return {
           source: 'Hacker News',
           platform: 'hn',
-          title: h.title || h.story_title || '(untitled)',
+          title: cleanHNTitle(h.title || h.story_title || '(untitled)'),
           preview: storyText,
           image: '',
           url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`,
@@ -2016,6 +2390,7 @@
         out.push({
           source: feed.name,
           platform: feed.platform || 'news',
+          region: feed.region || null,
           title,
           preview: clean.slice(0, 280),
           image: extractFeedImage(item),
@@ -2050,6 +2425,11 @@
     } else {
       const allowed = FILTER_GROUPS[activeFilter] || [];
       items = allItems.filter(i => allowed.includes(i.platform));
+    }
+
+    // Regional sub-filter (TN vs AP)
+    if (activeFilter === 'regional') {
+      items = items.filter(i => i.region === activeRegion);
     }
 
     // Apply hide-this-post / hide-source-today/forever / keyword filters
@@ -2096,7 +2476,9 @@
         : `<div class="stats" style="opacity:.6"><span class="stat">${escapeHtml(item.source)}</span></div>`;
       const saved = isSaved(item.url);
       const read = isRead(item.url);
+      const isPlayingThis = isReading && readingItems[currentReadIndex] && readingItems[currentReadIndex].url === item.url;
       const saveBtn = `<button class="save-btn ${saved ? 'saved' : ''}" data-url="${escapeHtml(item.url)}" onclick="toggleSave(this)" title="${saved ? 'Unsave' : 'Save for later'}">${saved ? '★' : '☆'}</button>`;
+      const listenBtn = `<button class="listen-card-btn ${isPlayingThis ? 'playing' : ''}" data-url="${escapeHtml(item.url)}" onclick="toggleListen(this); event.stopPropagation();" title="${isPlayingThis ? 'Stop reading' : 'Listen to this article'}">${isPlayingThis ? '⏸' : '🔊'}</button>`;
       const menuBtn = `<span class="card-menu-wrap">
         <button class="card-menu-btn" onclick="toggleCardMenu(this, event)" title="More">⋯</button>
         <div class="card-menu">
@@ -2120,6 +2502,7 @@
           <span class="source-tag ${item.platform}">${escapeHtml(item.source)}</span>
           <div style="display:flex;align-items:center;gap:4px">
             <span class="timestamp">${timeAgo(item.createdAt)}</span>
+            ${listenBtn}
             ${saveBtn}
             ${menuBtn}
           </div>
@@ -2181,6 +2564,7 @@
       ...NEWS_FEEDS.map(fetchNewsFeed),
       ...INDIA_FEEDS.map(fetchNewsFeed),
       ...REGIONAL_FEEDS.map(fetchNewsFeed),
+      ...MARINE_FEEDS.map(fetchNewsFeed),
     ];
 
     try {
@@ -2221,11 +2605,7 @@
   document.getElementById('refreshBtn').addEventListener('click', () => loadAll(true));
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
-  // Voice reader buttons
-  document.getElementById('listenBtn').addEventListener('click', () => {
-    if (isReading) stopReading();
-    else startReading();
-  });
+  // Voice reader player widget buttons (per-card listen buttons wired via inline onclick)
   document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
   document.getElementById('nextBtn').addEventListener('click', nextArticle);
   document.getElementById('prevBtn').addEventListener('click', prevArticle);
@@ -2247,6 +2627,12 @@
   const settingsModal = document.getElementById('settingsModal');
   const keywordInput = document.getElementById('keywordHideInput');
   const hiddenSourcesList = document.getElementById('hiddenSourcesList');
+  const voiceSelect = document.getElementById('voiceSelect');
+  const speedSlider = document.getElementById('speedSlider');
+  const pitchSlider = document.getElementById('pitchSlider');
+  const speedValue  = document.getElementById('speedValue');
+  const pitchValue  = document.getElementById('pitchValue');
+  const voiceTestBtn = document.getElementById('voiceTestBtn');
 
   function refreshHiddenSourcesList() {
     const set = getHiddenSources();
@@ -2259,21 +2645,134 @@
     ).join('');
   }
 
+  function populateVoiceDropdown() {
+    if (!voiceSelect || !('speechSynthesis' in window)) return;
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) {
+      voiceSelect.innerHTML = '<option value="">(no voices loaded yet — reopen this dialog)</option>';
+      return;
+    }
+    const englishVoices = voices
+      .filter(v => (v.lang || '').toLowerCase().startsWith('en'))
+      .filter(v => scoreVoice(v) >= 0) // hide novelty voices
+      .sort((a, b) => scoreVoice(b) - scoreVoice(a));
+
+    let current = '';
+    try { current = localStorage.getItem(VOICE_NAME_KEY) || ''; } catch {}
+
+    const opts = englishVoices.map(v => {
+      const name = v.name || 'Unknown';
+      const lang = v.lang || '';
+      let hint = '';
+      if (/(neural|natural|premium|enhanced|wavenet|studio)/i.test(name)) hint = ' ★ Premium';
+      else if (v.localService) hint = ' · Built-in';
+      const selected = v.name === current ? ' selected' : '';
+      return `<option value="${escapeHtml(v.name)}"${selected}>${escapeHtml(name)} (${escapeHtml(lang)})${hint}</option>`;
+    });
+    const autoSelected = !current ? ' selected' : '';
+    voiceSelect.innerHTML =
+      `<option value=""${autoSelected}>Auto (best on this device)</option>` +
+      opts.join('');
+  }
+
+  // Preview the current modal selections (without saving them). Same prosody
+  // pattern as real reading so the user hears what an article will sound like.
+  function previewVoice() {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const voices = speechSynthesis.getVoices();
+    const voice  = voiceSelect.value ? voices.find(v => v.name === voiceSelect.value) : pickBestVoice();
+    const rate   = parseFloat(speedSlider.value);
+    const pitch  = parseFloat(pitchSlider.value);
+
+    const previewChunks = [
+      { text: 'From the desk of Coffee and Headlines.',           rateOffset: -0.15, pitchMul: 0.88 },
+      { text: 'This is how today\u2019s news will sound.',         rateOffset: -0.08, pitchMul: 1.08 },
+      { text: 'Adjust the speed or try a different voice if you\u2019d like something different.', rateOffset: 0, pitchMul: 1.0 },
+    ];
+    voiceTestBtn.classList.add('speaking');
+    let idx = 0;
+    function speakNext() {
+      if (idx >= previewChunks.length) {
+        voiceTestBtn.classList.remove('speaking');
+        return;
+      }
+      const c = previewChunks[idx];
+      const u = new SpeechSynthesisUtterance(c.text);
+      if (voice) { u.voice = voice; u.lang = voice.lang; }
+      u.rate   = Math.max(0.5, Math.min(2.0, rate + (c.rateOffset || 0)));
+      u.pitch  = Math.max(0.6, Math.min(1.5, pitch * (c.pitchMul || 1.0)));
+      u.onend = () => { idx++; speakNext(); };
+      u.onerror = () => { idx++; speakNext(); };
+      speechSynthesis.speak(u);
+    }
+    speakNext();
+  }
+
   function openSettings() {
     keywordInput.value = localStorage.getItem(KEYWORD_HIDE_KEY) || '';
     refreshHiddenSourcesList();
+    populateVoiceDropdown();
+    // Reflect current saved values into the sliders
+    speedSlider.value = userRate.toFixed(2);
+    pitchSlider.value = userPitch.toFixed(2);
+    speedValue.textContent = userRate.toFixed(2) + '\u00d7';
+    pitchValue.textContent = userPitch.toFixed(2);
     settingsModal.classList.add('open');
   }
-  function closeSettings() { settingsModal.classList.remove('open'); }
+  function closeSettings() {
+    settingsModal.classList.remove('open');
+    // Stop any preview audio if the modal closes mid-preview
+    if ('speechSynthesis' in window && !isReading) speechSynthesis.cancel();
+    voiceTestBtn.classList.remove('speaking');
+  }
 
   document.getElementById('settingsToggle').addEventListener('click', openSettings);
   document.getElementById('modalCloseBtn').addEventListener('click', closeSettings);
   document.getElementById('modalSaveBtn').addEventListener('click', () => {
     setHideKeywords(keywordInput.value);
+    // Save voice settings
+    try {
+      const v = voiceSelect.value;
+      if (v) localStorage.setItem(VOICE_NAME_KEY, v);
+      else   localStorage.removeItem(VOICE_NAME_KEY);
+      localStorage.setItem(VOICE_RATE_KEY, speedSlider.value);
+      localStorage.setItem(VOICE_PITCH_KEY, pitchSlider.value);
+    } catch {}
+    userRate  = parseFloat(speedSlider.value);
+    userPitch = parseFloat(pitchSlider.value);
+    pickedVoice = pickBestVoice();
+    // Stop any preview that's mid-flight
+    if (!isReading && 'speechSynthesis' in window) speechSynthesis.cancel();
+    voiceTestBtn.classList.remove('speaking');
     closeSettings();
   });
   settingsModal.addEventListener('click', e => {
     if (e.target === settingsModal) closeSettings();
+  });
+
+  // Live-update slider value labels as user drags
+  speedSlider.addEventListener('input', () => {
+    speedValue.textContent = parseFloat(speedSlider.value).toFixed(2) + '\u00d7';
+  });
+  pitchSlider.addEventListener('input', () => {
+    pitchValue.textContent = parseFloat(pitchSlider.value).toFixed(2);
+  });
+  voiceTestBtn.addEventListener('click', previewVoice);
+
+  // Region sub-filter dropdown (visible only when "Regional" tab is active)
+  const regionSelect = document.getElementById('regionSelect');
+  regionSelect.value = activeRegion;
+  function updateRegionVisibility() {
+    regionSelect.classList.toggle('visible', activeFilter === 'regional');
+  }
+  updateRegionVisibility();
+  // Stop click on the select from bubbling into the filters click handler
+  regionSelect.addEventListener('click', e => e.stopPropagation());
+  regionSelect.addEventListener('change', e => {
+    activeRegion = e.target.value;
+    try { localStorage.setItem(REGION_KEY, activeRegion); } catch {}
+    render();
   });
 
   document.getElementById('filters').addEventListener('click', e => {
@@ -2282,6 +2781,7 @@
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     activeFilter = btn.dataset.source;
+    updateRegionVisibility();
     render();
   });
 
@@ -2314,6 +2814,7 @@
 
   // initial setup
   loadTheme();
+  loadVoiceSettings();
   cleanupRead();
   updateSavedCount();
 
